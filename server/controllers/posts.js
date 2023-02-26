@@ -29,7 +29,6 @@ export const createPost = async (req, res) => {
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {
-    console.log(req.body,'id');
     const post = await Post.find().sort({createdAt:-1})
     res.status(200).json(post);
   } catch (err) {
@@ -79,7 +78,6 @@ export const postComment = async (req, res) => {
   try {
     const { id } = req.params;
     const { comment, userId } = req.body;
-    console.log(req.body);
     const post = await Post.findById(id);
     post.comments.push({comment:comment, userId:userId,isDelete:false});
     await post.save();

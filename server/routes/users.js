@@ -2,6 +2,7 @@ const router = express.Router();
 import express from "express";
 import {
   getUser,
+  getUsers,
   getUserFriends,
   addRemoveFriend,
   updateUser,
@@ -10,6 +11,7 @@ import { verifyToken } from "../middlleware/auth.js";
 
 
 /* READ */
+router.get("/", verifyToken, getUsers);
 router.get("/:id", verifyToken, getUser);
 router.get("/:id/friends", verifyToken, getUserFriends);
 

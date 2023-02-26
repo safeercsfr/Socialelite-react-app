@@ -31,7 +31,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      dispatch(setPosts({ posts: response.data, userId }));
+      dispatch(setPosts({ posts: response.data }));
     } catch (error) {
       console.error(error);
     }
@@ -73,6 +73,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
               userPicturePath={userPicturePath}
               likes={likes}
               comments={comments}
+              isProfile
             />
           )
         )}

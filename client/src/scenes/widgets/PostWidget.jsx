@@ -35,8 +35,7 @@ const PostWidget = ({
 }) => {
   const [isComments, setIsComments] = useState(false);
   const [comment, setComment] = useState("");
-  const [users, setUsers] = useState('unknown');
-  console.log(users,'users');
+  const [users, setUsers] = useState({});
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
@@ -88,8 +87,6 @@ const PostWidget = ({
         }
       );
       const updatedPost = response.data;
-      console.log(updatedPost.firstName);
-      setUsers(updatedPost.firstName + ' ' + updatedPost.lastName)
       dispatch(setPost({ post: updatedPost }));
       setComment("");
     } catch (error) {
@@ -97,9 +94,32 @@ const PostWidget = ({
     }
   };
 
-  // const handleDeleteComment = async (id) => {
-  //   console.log(id);
-  // };
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/users`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const users = response.data.reduce(
+          (acc, user) => ({
+            ...acc,
+            [user._id]: user,
+          }),
+          {}
+        );
+        setUsers(users);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchUsers();
+  }, [token]);
 
   return (
     <WidgetWrapper m="2rem 0">
@@ -151,7 +171,7 @@ const PostWidget = ({
             <Box key={`${name}-${i}`}>
               <Divider />
               <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                <strong>{users} : </strong>
+                <strong>{users[comment.userId]?.firstName}: </strong>
                 {comment.comment}
               </Typography>
             </Box>
