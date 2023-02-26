@@ -34,8 +34,7 @@ const MyPostWidget = ({ picturePath }) => {
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const posts1 = useSelector((state) => state.posts);
-  console.log(posts1,'posts1');
+  const posts = useSelector((state) => state.posts);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
@@ -53,45 +52,8 @@ const MyPostWidget = ({ picturePath }) => {
       const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/posts`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const posts = response.data;
-      // dispatch(setPosts({ posts:[...posts1,posts[posts.length-1]] }));
-      dispatch(setPosts({ posts:[posts,...posts1] }));
-      // dispatch(setPosts({ posts }));
-      // dispatch(setPosts({ posts : [...posts1,{
-      //   comments: [],
-      //   createdAt
-      //   : 
-      //   "2023-02-26T10:02:18.347Z",
-      //   description
-      //   : 
-      //   "saf",
-      //   firstName
-      //   : 
-      //   "sad",
-      //   lastName
-      //   : 
-      //   "sfr",
-      //   likes
-      //   : 
-      //   {},
-      //   location
-      //   : 
-      //   "malapp",
-      //   updatedAt
-      //   : 
-      //   "2023-02-26T10:02:18.347Z",
-      //   userId
-      //   : 
-      //   "63fb2e12e207c8acd0608a3f",
-      //   userPicturePath
-      //   : 
-      //   "banner2.webp",
-      //   __v
-      //   : 
-      //   0,
-      //   _id
-      //   : 
-      //   "42423"}]}));
+      const post = response.data;
+      dispatch(setPosts({ posts:[post,...posts] }));
       setImage(null);
       setPost("");
     } catch (error) {

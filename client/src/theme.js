@@ -32,11 +32,10 @@ export const colorTokens = {
 // mui theme settings
 export const themeSettings = (mode) => {
   return {
-    palette: {     //palette is used to modify the color of a component
+    palette: {
       mode: mode,
       ...(mode === "dark"
         ? {
-            // palette values for dark mode
             primary: {
               dark: colorTokens.primary[200],
               main: colorTokens.primary[500],
@@ -55,7 +54,6 @@ export const themeSettings = (mode) => {
             },
           }
         : {
-            // palette values for light mode
             primary: {
               dark: colorTokens.primary[700],
               main: colorTokens.primary[500],

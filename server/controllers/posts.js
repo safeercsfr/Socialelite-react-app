@@ -29,6 +29,7 @@ export const createPost = async (req, res) => {
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {
+    console.log(req.body,'id');
     const post = await Post.find().sort({createdAt:-1})
     res.status(200).json(post);
   } catch (err) {

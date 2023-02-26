@@ -13,9 +13,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UserEdit from "./UserEdit";
-const UserWidget = ({ userId, picturePath,isEditUser }) => {
+const UserWidget = ({ userId, picturePath, isEditUser }) => {
   const [user, setUser] = useState(null);
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
@@ -37,29 +37,37 @@ const UserWidget = ({ userId, picturePath,isEditUser }) => {
   useEffect(() => {
     getUser();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  
+
   const handleEditClick = () => {
-    setIsEditing(true); 
+    setIsEditing(true);
   };
 
-  const onSave = (values)=>{
-    console.log(values);
-    setIsEditing(false)
-
-  }
+  const onSave = (userDetails) => {
+    axios
+      .put(`${process.env.REACT_APP_BASE_URL}/users/${userId}`, userDetails, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        setUser(response.data);
+        setIsEditing(false);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
 
   if (isEditing) {
     return (
       <UserEdit
         user={user}
-        onCancel={()=>setIsEditing(false)}
-        onSave={onSave} 
+        onCancel={() => setIsEditing(false)}
+        onSave={onSave}
       />
     );
   }
 
   if (!user) {
-    return null
+    return null;
   }
   const {
     firstName,
@@ -98,7 +106,12 @@ const UserWidget = ({ userId, picturePath,isEditUser }) => {
             <Typography color={medium}>{friends.length} friends</Typography>
           </Box>
         </FlexBetween>
-        {isEditUser && <ManageAccountsOutlined onClick={handleEditClick}/>}
+        {isEditUser && (
+          <ManageAccountsOutlined
+            style={{ cursor: "pointer" }}
+            onClick={handleEditClick}
+          />
+        )}
       </FlexBetween>
 
       <Divider />
@@ -154,7 +167,7 @@ const UserWidget = ({ userId, picturePath,isEditUser }) => {
           <EditOutlined sx={{ color: main }} />
         </FlexBetween>
 
-        <FlexBetween gap="1rem" >
+        <FlexBetween gap="1rem">
           <FlexBetween gap="1rem">
             <img src="../assets/twitter.png" alt="twitter" />
             <Box>
