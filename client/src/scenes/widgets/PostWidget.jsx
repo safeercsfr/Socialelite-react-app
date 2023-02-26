@@ -1,6 +1,6 @@
 import {
   ChatBubbleOutlineOutlined,
-  DeleteOutlined,
+  // DeleteOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
   ShareOutlined,
@@ -17,7 +17,7 @@ import {
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
 import axios from "axios";
@@ -35,6 +35,8 @@ const PostWidget = ({
 }) => {
   const [isComments, setIsComments] = useState(false);
   const [comment, setComment] = useState("");
+  const [users, setUsers] = useState('unknown');
+  console.log(users,'users');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
@@ -86,6 +88,8 @@ const PostWidget = ({
         }
       );
       const updatedPost = response.data;
+      console.log(updatedPost.firstName);
+      setUsers(updatedPost.firstName + ' ' + updatedPost.lastName)
       dispatch(setPost({ post: updatedPost }));
       setComment("");
     } catch (error) {
@@ -93,9 +97,9 @@ const PostWidget = ({
     }
   };
 
-  const handleDeleteComment = async (id) => {
-    console.log(id);
-  };
+  // const handleDeleteComment = async (id) => {
+  //   console.log(id);
+  // };
 
   return (
     <WidgetWrapper m="2rem 0">
@@ -147,13 +151,12 @@ const PostWidget = ({
             <Box key={`${name}-${i}`}>
               <Divider />
               <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                {comment}
-                <IconButton onClick={() => handleDeleteComment(comment._id)}>
-                  <DeleteOutlined />
-                </IconButton>
+                <strong>{users} : </strong>
+                {comment.comment}
               </Typography>
             </Box>
           ))}
+
           <form onSubmit={handleCommentSubmit}>
             <Box sx={{ mt: "1rem" }}>
               <Box sx={{ display: "flex" }}>

@@ -23,8 +23,10 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const isFriend = friends.find((friend) => friend._id === friendId);
 
   const patchFriend = async () => {
+    console.log('hi');
     const response = await axios.patch(
       `${process.env.REACT_APP_BASE_URL}/users/${_id}/${friendId}`,
+      {},
       {
         headers: { Authorization: `Bearer ${token}` },
         "Content-Type": "application/json",
