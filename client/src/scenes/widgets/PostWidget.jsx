@@ -6,6 +6,7 @@ import {
   ShareOutlined,
 } from "@mui/icons-material";
 import {
+  Avatar,
   Box,
   Button,
   Divider,
@@ -167,15 +168,42 @@ const PostWidget = ({
       </FlexBetween>
       {isComments && (
         <Box mt="0.5rem">
-          {comments.map((comment, i) => (
-            <Box key={`${name}-${i}`}>
-              <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                <strong>{users[comment.userId]?.firstName}: </strong>
-                {comment.comment}
-              </Typography>
-            </Box>
-          ))}
+          <Box
+            sx={{
+              maxHeight: "10rem",
+              overflowY: "scroll",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }}
+          >
+            {comments.map((comment, i) => (
+              <Box key={`${name}-${i}`}>
+                <Divider />
+
+                <Typography
+                  sx={{
+                    color: main,
+                    m: "0.5rem 0",
+                    pl: "1rem",
+                    display: "flex",
+                  }}
+                >
+                  <Avatar
+                    sx={{ width: 30, height: 30, marginRight: "1rem" }}
+                    alt="user Image"
+                    src={`${process.env.REACT_APP_BASE_URL}/assets/${
+                      users[comment.userId]?.picturePath
+                    }`}
+                  />
+                  <strong>{users[comment.userId]?.firstName} </strong>
+                  <Box sx={{marginLeft:"0.65rem"}}>
+                  {comment.comment}
+                  </Box>
+                </Typography>
+              </Box>
+            ))}
+          </Box>
 
           <form onSubmit={handleCommentSubmit}>
             <Box sx={{ mt: "1rem" }}>

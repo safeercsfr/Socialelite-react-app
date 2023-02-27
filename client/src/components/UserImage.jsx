@@ -1,17 +1,52 @@
-import { Box } from '@mui/system'
+import { Box } from "@mui/system";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ProfilePhotoEdit from "scenes/widgets/ProfilePhotoEdit";
 
-const UserImage = ({image, size="60px"}) => {
-  return (
-    <Box width={size} height={size}>
-        <img 
-          style={{objectFit:"cover", borderRadius:"50%"}}
+const UserImage = ({ image, size = "60px", isProfile }) => {
+  const dispatch = useDispatch()
+  const boolValue = useSelector((state)=>state.isEditing)
+  const [isEditing, setIsEditing] = useState(boolValue);
+
+  const handleBoxClick = () => {
+    dispatch(setIsEditing(true))
+  };
+
+  if(isProfile){
+    return isEditing ? (<ProfilePhotoEdit />) : (
+      <Box
+        width={size}
+        height={size}
+        sx={{ cursor: "pointer" }}
+        onClick={handleBoxClick}
+      >
+        <img
+          style={{ objectFit: "cover", borderRadius: "50%" }}
           width={size}
           height={size}
           alt="user"
-          src= {`${process.env.REACT_APP_BASE_URL}/assets/${image}`}
+          src={`${process.env.REACT_APP_BASE_URL}/assets/${image}`}
         />
-    </Box>
-  )
-}
+      </Box>
+    );
+  }
 
-export default UserImage
+  return (
+    <Box
+      width={size}
+      height={size}
+      sx={{ cursor: "pointer" }}
+      onClick={handleBoxClick}
+    >
+      <img
+        style={{ objectFit: "cover", borderRadius: "50%" }}
+        width={size}
+        height={size}
+        alt="user"
+        src={`${process.env.REACT_APP_BASE_URL}/assets/${image}`}
+      />
+    </Box>
+  );
+};
+
+export default UserImage;

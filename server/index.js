@@ -12,6 +12,7 @@ import authRoutes from "./routes/auth.js"
 import userRoutes from "./routes/users.js"
 import postRoutes from "./routes/posts.js"
 import { register } from "./controllers/auth.js";
+import { updateProPic } from "./controllers/auth.js";
 import { createPost } from "./controllers/posts.js";
 import { verifyToken } from "./middlleware/auth.js";
 
@@ -42,6 +43,7 @@ const upload = multer({storage})
 
 // ROUTES WITH FILE
 app.post("/auth/register", upload.single('picture'), register)
+app.put("/auth/update/:id",verifyToken, upload.single('picturePath'), updateProPic)
 app.post("/posts", verifyToken,upload.single('picture'),createPost)
 
 // ROUTES

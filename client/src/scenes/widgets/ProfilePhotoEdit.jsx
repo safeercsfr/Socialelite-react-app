@@ -1,52 +1,50 @@
-import { useState } from "react";
+import React from "react";
+import { IconButton, Input } from "@mui/material";
+import { CameraAlt } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { setIsEditing } from "state";
 
-function ProfilePhotoEdit() {
-  const [file, setFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [cropper, setCropper] = useState(null);
+const ProfilePhotoEdit = () => {
+  const dispatch = useDispatch()
+  const boolValue = useSelector((state)=>state.isEditing)
+  const userId = useSelector((state) => state.user._id);
+  const token = useSelector((state) => state.token);
 
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewUrl(reader.result);
-    };
-    reader.readAsDataURL(selectedFile);
-  };
+  const handleFileChange = async (e) => {
+    const selectedFile = e.target.files[0];
 
-  const handleCrop = () => {
-    if (cropper) {
-      const croppedDataUrl = cropper.getCroppedCanvas().toDataURL();
-      setCroppedImage(croppedDataUrl);
-    }
-  };
+    const formData = new FormData();
+    formData.append("picturePath", selectedFile.name);
 
-  const handleSave = () => {
-    // TODO: Upload the cropped image to the server and update the user's profile photo
-    // with the new URL.
+    await axios
+    .put(`${process.env.REACT_APP_BASE_URL}/auth/update/${userId}`, formData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((res) => {
+      const savedUser = res.data;
+      dispatch(setIsEditing({boolValue:false}))
+    })
+    .catch((error) => {
+      console.error(error);
+    });
   };
 
   return (
-    <div>
-      <h3>Edit Profile Photo</h3>
-      <div>
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-      </div>
-      {previewUrl && (
-        <div>
-          <img src={previewUrl} alt="Preview" ref={(cropper) => setCropper(cropper)} />
-          <button onClick={handleCrop}>Crop</button>
-        </div>
-      )}
-      {croppedImage && (
-        <div>
-          <img src={croppedImage} alt="Cropped" />
-          <button onClick={handleSave}>Save</button>
-        </div>
-      )}
-    </div>
+    <>
+    <Input
+      type="file"
+      id="upload-button"
+      onChange={handleFileChange}
+      style={{ display: "none" }}
+    />
+    <label htmlFor="upload-button">
+      <IconButton component="span">
+        <CameraAlt />
+      </IconButton>
+    </label>
+    </>
   );
-}
-export default ProfilePhotoEdit
+};
+
+export default ProfilePhotoEdit;

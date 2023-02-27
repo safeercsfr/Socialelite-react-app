@@ -13,8 +13,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UserEdit from "./UserEdit";
-const UserWidget = ({ userId, picturePath, isEditUser }) => {
+const UserWidget = ({ userId, picturePath, isEditUser, isProfile=false }) => {
   const [user, setUser] = useState(null);
+  console.log(user);
   const [isEditing, setIsEditing] = useState(false);
   const { palette } = useTheme();
   const navigate = useNavigate();
@@ -56,6 +57,8 @@ const UserWidget = ({ userId, picturePath, isEditUser }) => {
       });
   };
 
+  
+
   if (isEditing) {
     return (
       <UserEdit
@@ -74,13 +77,13 @@ const UserWidget = ({ userId, picturePath, isEditUser }) => {
     lastName,
     location,
     occupation,
-    viewedProfile,
+    viewProfile,
     impressions,
     friends,
   } = user;
 
   return (
-    <WidgetWrapper>
+    <WidgetWrapper style={isProfile ? {}:{ position: 'sticky', top: '7.3rem' }}>
       {/* FIRST ROW */}
       <FlexBetween
         gap="0.5rem"
@@ -88,7 +91,7 @@ const UserWidget = ({ userId, picturePath, isEditUser }) => {
         onClick={() => navigate(`/profile/${userId}`)}
       >
         <FlexBetween gap="1rem">
-          <UserImage image={picturePath} />
+          <UserImage image={picturePath} isProfile={isProfile}/>
           <Box>
             <Typography
               variant="h4"
@@ -135,7 +138,7 @@ const UserWidget = ({ userId, picturePath, isEditUser }) => {
         <FlexBetween mb="0.5rem">
           <Typography color={medium}>Who's viewed your profile</Typography>
           <Typography color={main} fontWeight="500">
-            {viewedProfile}
+            {viewProfile}
           </Typography>
         </FlexBetween>
         <FlexBetween>
@@ -180,7 +183,6 @@ const UserWidget = ({ userId, picturePath, isEditUser }) => {
           <EditOutlined sx={{ color: main }} />
         </FlexBetween>
       </Box>
-      {/* <UserEdit/> */}
     </WidgetWrapper>
   );
 };
