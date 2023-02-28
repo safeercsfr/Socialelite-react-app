@@ -5,7 +5,8 @@ const initialState={
     user: null,
     token: null,
     posts:[],
-    isEditing:false
+    isEditing:false,
+    userDetails:null
 }
 
 export const authSlice = createSlice({
@@ -41,10 +42,13 @@ export const authSlice = createSlice({
             state.posts=updatedPosts
         },
         setIsEditing: (state, action) => {
-            state.isEditing = action.payload;
-        }
+            state.isEditing = action.payload
+        },
+        setProfileUpdate:(state, action)=>{
+            state.userDetails=action.payload.userDetails
+        },
     }
 })
 
-export const {setMode,setLogin,setLogout,setFriends,setPosts,setPost,setIsEditing}=authSlice.actions;
+export const {setMode,setLogin,setLogout,setFriends,setPosts,setPost,setIsEditing,setProfileUpdate}=authSlice.actions;
 export default authSlice.reducer;

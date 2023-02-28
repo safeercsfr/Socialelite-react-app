@@ -20,7 +20,8 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost } from "state";
+import { setPost } from "state/authSlice";
+// import axios from "../../utils/axios";
 import axios from "axios";
 
 const PostWidget = ({

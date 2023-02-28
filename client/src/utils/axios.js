@@ -1,8 +1,6 @@
-import axios from 'axios'
-import { baseUrl } from './constants'
+// import axios from 'axios'
 
-const  instance = axios.create({
-    baseUrl:baseUrl
-})
+// axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
+// axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-export default instance;
+// export default axios
