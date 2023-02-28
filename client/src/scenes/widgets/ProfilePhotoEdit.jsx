@@ -2,7 +2,7 @@ import React from "react";
 import { IconButton, Input } from "@mui/material";
 import { CameraAlt } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+import { putDataAPI } from "utils/fetchData";
 import { setIsEditing, setProfileUpdate } from "state/authSlice";
 
 const ProfilePhotoEdit = () => {
@@ -11,30 +11,22 @@ const ProfilePhotoEdit = () => {
   const token = useSelector((state) => state.token);
 
   const handleFileChange = async (e) => {
-    const selectedFile = e.target.files[0];
-
-    const formData = new FormData();
-    formData.append("picturePath", selectedFile.name);
-
-    await axios
-      .put(
-        `${process.env.REACT_APP_BASE_URL}/auth/update/${userId}`,
+    try {
+      const selectedFile = e.target.files[0];
+      const formData = new FormData();
+      formData.append("picturePath", selectedFile.name);
+      const { data } = await putDataAPI(
+        `/auth/update/${userId}`,
         formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
-      .then((res) => {
-        const savedUser = res.data;
-        console.log(savedUser,'savedUser');
-        if (savedUser){
-          dispatch(setProfileUpdate({userDetails:savedUser}))
-          dispatch(setIsEditing(false));
-        } 
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+        token
+      );
+      if (data) {
+        dispatch(setProfileUpdate({ userDetails: data }));
+        dispatch(setIsEditing(false));
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

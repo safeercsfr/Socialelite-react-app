@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state/authSlice";
 import PostWidget from "./PostWidget";
+import { getDataAPI } from "utils/fetchData";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
@@ -11,27 +11,16 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   const getPosts = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/posts`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      dispatch(setPosts({ posts: response.data }));
+      const { data } = await getDataAPI("/posts", token);
+      dispatch(setPosts({ posts: data }));
     } catch (error) {
       console.error(error);
     }
   };
-
   const getUserPosts = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/posts/${userId}/posts`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      dispatch(setPosts({ posts: response.data }));
+      const { data } = await getDataAPI(`/posts/${userId}/posts`, token);
+      dispatch(setPosts({ posts: data }));
     } catch (error) {
       console.error(error);
     }

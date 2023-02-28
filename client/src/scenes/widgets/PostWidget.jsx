@@ -21,8 +21,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state/authSlice";
-// import axios from "../../utils/axios";
-import axios from "axios";
+import { patchDataAPI, postDataAPI, getDataAPI } from "utils/fetchData";
 
 const PostWidget = ({
   postId,
@@ -49,19 +48,12 @@ const PostWidget = ({
 
   const patchLike = async () => {
     try {
-      const response = await axios.patch(
-        `${process.env.REACT_APP_BASE_URL}/posts/${postId}/like`,
-        {
-          userId: loggedInUserId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+      const { data } = await patchDataAPI(
+        `/posts/${postId}/like`,
+        loggedInUserId,
+        token
       );
-      const updatedPost = response.data;
+      const updatedPost = data;
       dispatch(setPost({ post: updatedPost }));
     } catch (error) {
       console.error(error);
@@ -75,20 +67,12 @@ const PostWidget = ({
   const handleCommentSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/posts/${postId}/comment`,
-        {
-          userId: loggedInUserId,
-          comment,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+      const { data } = await postDataAPI(
+        `/posts/${postId}/comment`,
+        { userId: loggedInUserId, comment },
+        token
       );
-      const updatedPost = response.data;
+      const updatedPost = data;
       dispatch(setPost({ post: updatedPost }));
       setComment("");
     } catch (error) {
@@ -99,16 +83,8 @@ const PostWidget = ({
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/users`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const users = response.data.reduce(
+        const { data } = await getDataAPI("/users", token);
+        const users = data.reduce(
           (acc, user) => ({
             ...acc,
             [user._id]: user,
@@ -198,9 +174,7 @@ const PostWidget = ({
                     }`}
                   />
                   <strong>{users[comment.userId]?.firstName} </strong>
-                  <Box sx={{marginLeft:"0.65rem"}}>
-                  {comment.comment}
-                  </Box>
+                  <Box sx={{ marginLeft: "0.65rem" }}>{comment.comment}</Box>
                 </Typography>
               </Box>
             ))}

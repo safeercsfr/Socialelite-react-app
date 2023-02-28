@@ -11,9 +11,10 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import UserEdit from "./UserEdit";
-const UserWidget = ({ userId, picturePath, isEditUser, isProfile=false }) => {
+import { getDataAPI, putDataAPI } from "utils/fetchData";
+
+const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
   const [user, setUser] = useState(null);
   console.log(user);
   const [isEditing, setIsEditing] = useState(false);
@@ -25,14 +26,12 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile=false }) => {
   const main = palette.neutral.main;
 
   const getUser = async () => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}/users/${userId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    const data = await response.data;
-    setUser(data);
+    try {
+      const { data } = await getDataAPI(`/users/${userId}`, token);
+      setUser(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -43,21 +42,15 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile=false }) => {
     setIsEditing(true);
   };
 
-  const onSave = (userDetails) => {
-    axios
-      .put(`${process.env.REACT_APP_BASE_URL}/users/${userId}`, userDetails, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        setUser(response.data);
-        setIsEditing(false);
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+  const onSave = async (userDetails) => {
+    try {
+      const { data } = await putDataAPI(`/users/${userId}`, userDetails, token);
+      setUser(data);
+      setIsEditing(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-  
 
   if (isEditing) {
     return (
@@ -83,7 +76,9 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile=false }) => {
   } = user;
 
   return (
-    <WidgetWrapper style={isProfile ? {}:{ position: 'sticky', top: '7.3rem' }}>
+    <WidgetWrapper
+      style={isProfile ? {} : { position: "sticky", top: "7.3rem" }}
+    >
       {/* FIRST ROW */}
       <FlexBetween
         gap="0.5rem"
@@ -91,7 +86,7 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile=false }) => {
         onClick={() => navigate(`/profile/${userId}`)}
       >
         <FlexBetween gap="1rem">
-          <UserImage image={picturePath} isProfile={isProfile}/>
+          <UserImage image={picturePath} isProfile={isProfile} />
           <Box>
             <Typography
               variant="h4"
