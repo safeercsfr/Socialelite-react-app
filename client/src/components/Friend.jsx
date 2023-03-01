@@ -1,9 +1,9 @@
 import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends } from "state/authSlice";
+import { patchDataAPI } from "utils/fetchData";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 
@@ -23,16 +23,12 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const isFriend = friends.find((friend) => friend._id === friendId);
 
   const patchFriend = async () => {
-    const response = await axios.patch(
-      `${process.env.REACT_APP_BASE_URL}/users/${_id}/${friendId}`,
-      {},
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        "Content-Type": "application/json",
-      }
-    );
-    const data = response.data;
-    dispatch(setFriends({ friends: data }));
+    try {
+      const {data} = await patchDataAPI(`/users/${_id}/${friendId}`,{},token)
+      dispatch(setFriends({ friends: data }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

@@ -15,8 +15,8 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state/authSlice";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
-import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
+import { postDataAPI } from "utils/fetchData";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -58,41 +58,29 @@ const Form = () => {
   const isRegister = pageType === "register";
 
   const register = async (values, onSubmitProps) => {
-    const formData = new FormData();
-    for (let value in values) {
-      formData.append(value, values[value]);
-    }
-    formData.append("picturePath", values.picture.name);
-
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}/auth/register`, formData, {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((res) => {
-        const savedUser = res.data;
-        onSubmitProps.resetForm();
-
-        if (savedUser) {
-          setPageType("login")
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response.data.error, {
-          position: "bottom-center",
-        });
+    try {
+      const formData = new FormData();
+      for (let value in values) {
+        formData.append(value, values[value]);
+      }
+      formData.append("picturePath", values.picture.name);
+      
+      const { data } = await postDataAPI(`/auth/register`, formData);
+      const savedUser = data;
+      onSubmitProps.resetForm();
+      if (savedUser) setPageType("login");
+    } catch (err) {
+      toast.error(err.response.data.error, {
+        position: "bottom-center",
       });
+      console.log(err);
+    }
   };
 
   const login = async (values, onSubmitProps) => {
-    await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/auth/login`,
-        JSON.stringify(values),
-        { headers: { "Content-Type": "application/json" } }
-      )
-      .then((response) => {
-        const loggedIn = response.data;
-        console.log(loggedIn);
+    try {
+      const {data} = await postDataAPI(`/auth/login`,values)
+      const loggedIn = data
         onSubmitProps.resetForm();
         if (loggedIn) {
           dispatch(
@@ -103,14 +91,14 @@ const Form = () => {
           );
           navigate("/home");
         }
-      })
-      .catch((err) => {
-        ((error) => {
-          toast.error(error.response.data.msg, {
-            position: "bottom-center",
-          });
-        })(err);
-      });
+    } catch (err) {
+      (({response}) => {
+        toast.error(response.data.msg, {
+          position: "bottom-center",
+        });
+      })(err);
+      console.log(err);
+    }
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {

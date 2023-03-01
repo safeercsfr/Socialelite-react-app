@@ -37,6 +37,25 @@ export const register = async (req, res) => {
   }
 };
 
+// LOGGING IN
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email: email });
+    if (!user) return res.status(400).json({ msg: "User does not exist. " });
+    
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ msg: "Invalid Password. " });
+    
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    delete user.password;
+    res.status(200).json({ token, user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// UPDATE PROFILE PHOTO 
 export const updateProPic = async (req, res) => {
   try {
     const { id } = req.params;
@@ -49,23 +68,5 @@ export const updateProPic = async (req, res) => {
     res.status(201).json(updatedUser);
   } catch (err) {
     res.status(500).json({ error: "User Already Exists!" });
-  }
-};
-
-// LOGGING IN
-export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email: email });
-    if (!user) return res.status(400).json({ msg: "User does not exist. " });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid Password. " });
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    delete user.password;
-    res.status(200).json({ token, user });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
   }
 };

@@ -7,7 +7,7 @@ import FriendListWidget from "scenes/widgets/FriendListWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import UserWidget from "scenes/widgets/UserWidget";
-import axios from "axios";
+import { getDataAPI } from "utils/fetchData";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -15,13 +15,14 @@ const ProfilePage = () => {
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
-  const getUser = async () =>{
-    const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/users/${userId}`,{
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    const data = response.data;
-    setUser(data)
-  }
+  const getUser = async () => {
+    try {
+      const { data } = await getDataAPI(`/users/${userId}`, token);
+      setUser(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getUser();
@@ -40,7 +41,12 @@ const ProfilePage = () => {
         justifyContent="center"
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-          <UserWidget userId={userId} picturePath={user.picturePath} isEditUser={true} isProfile />
+          <UserWidget
+            userId={userId}
+            picturePath={user.picturePath}
+            isEditUser={true}
+            isProfile
+          />
           <Box m="2rem 0" />
           <FriendListWidget userId={userId} />
         </Box>

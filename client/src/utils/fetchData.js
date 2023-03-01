@@ -1,6 +1,7 @@
 import config from "./config";
 import axios from "axios";
 
+// GET REQUEST
 export const getDataAPI = async (url, token) => {
   const res = await axios.get(config.SERVER_URL + url, {
     headers: { Authorization: `Bearer ${token}` },
@@ -8,16 +9,19 @@ export const getDataAPI = async (url, token) => {
   return res;
 };
 
-export const postDataAPI = async (url, { userId, comment }, token) => {
+// POST REQUEST
+export const postDataAPI = async (url, formData, token) => {
   const res = await axios.post(
     config.SERVER_URL + url,
-    { userId, comment },
+    formData,
     {
       headers: { Authorization: `Bearer ${token}` },
     }
   );
   return res;
 };
+
+// PUT REQUEST
 export const putDataAPI = async (url, formData, token) => {
   const res = await axios.put(
     config.SERVER_URL + url,
@@ -29,6 +33,7 @@ export const putDataAPI = async (url, formData, token) => {
   return res;
 };
 
+// PATCH REQUEST
 export const patchDataAPI = async (url, userId, token) => {
   const res = await axios.patch(
     config.SERVER_URL + url,

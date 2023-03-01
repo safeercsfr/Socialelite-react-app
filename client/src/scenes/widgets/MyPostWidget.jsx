@@ -24,7 +24,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state/authSlice";
-import axios from "axios";
+import { postDataAPI } from "utils/fetchData";
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
@@ -40,20 +40,17 @@ const MyPostWidget = ({ picturePath }) => {
   const medium = palette.neutral.medium;
 
   const handlePost = async () => {
-    const formData = new FormData();
-    formData.append("userId", _id);
-    formData.append("description", post);
-    if (image) {
-      formData.append("picture", image);
-      formData.append("picturePath", image.name);
-    }
-
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/posts`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const post = response.data;
-      dispatch(setPosts({ posts:[post,...posts] }));
+      const formData = new FormData();
+      formData.append("userId", _id);
+      formData.append("description", post);
+      if (image) {
+        formData.append("picture", image);
+        formData.append("picturePath", image.name);
+      }
+
+      const { data } = await postDataAPI("/posts", formData, token);
+      dispatch(setPosts({ posts: [data, ...posts] }));
       setImage(null);
       setPost("");
     } catch (error) {

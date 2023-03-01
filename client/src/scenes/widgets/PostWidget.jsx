@@ -65,8 +65,8 @@ const PostWidget = ({
   };
 
   const handleCommentSubmit = async (event) => {
-    event.preventDefault();
     try {
+    event.preventDefault();
       const { data } = await postDataAPI(
         `/posts/${postId}/comment`,
         { userId: loggedInUserId, comment },

@@ -16,7 +16,6 @@ import { getDataAPI, putDataAPI } from "utils/fetchData";
 
 const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
   const [user, setUser] = useState(null);
-  console.log(user);
   const [isEditing, setIsEditing] = useState(false);
   const { palette } = useTheme();
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
       const { data } = await getDataAPI(`/users/${userId}`, token);
       setUser(data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -48,7 +47,7 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
       setUser(data);
       setIsEditing(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
