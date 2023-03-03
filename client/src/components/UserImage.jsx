@@ -26,7 +26,7 @@ const UserImage = ({ image, size = "60px", isProfile }) => {
           width={size}
           height={size}
           alt="user"
-          src={`${process.env.REACT_APP_BASE_URL}/assets/${image}`}
+          src={image}
         />
       </Box>
     );
@@ -43,7 +43,7 @@ const UserImage = ({ image, size = "60px", isProfile }) => {
         width={size}
         height={size}
         alt="user"
-        src={`${process.env.REACT_APP_BASE_URL}/assets/${image}`}
+        src={image}
       />
     </Box>
   );

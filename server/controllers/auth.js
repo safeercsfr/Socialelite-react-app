@@ -1,16 +1,17 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import cloudinary from "../config/cloudinary.js";
 
 // REGISTER USER
 export const register = async (req, res) => {
   try {
+    const result = await cloudinary.uploader.upload(req.file.path, {folder:"ProfileImage"} );
     const {
       firstName,
       lastName,
       email,
       password,
-      picturePath,
       friends,
       location,
       occupation,
@@ -23,7 +24,7 @@ export const register = async (req, res) => {
       lastName,
       email,
       password: passwordHash,
-      picturePath,
+      picturePath:result.secure_url,
       friends,
       location,
       occupation,
@@ -58,15 +59,19 @@ export const login = async (req, res) => {
 // UPDATE PROFILE PHOTO 
 export const updateProPic = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { picturePath } = req.body;
+    const result = await cloudinary.uploader.upload(req.file.path, {folder:"ProfileImage"} );
+    console.log(result.secure_url,'result.secure_url');
+    const picturePath = result.secure_url
+    const { id } = req.user;
+    // const { picturePath } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       id,
       { picturePath },
       { new: true }
     );
+    console.log(updatedUser,'updatedUser');
     res.status(201).json(updatedUser);
   } catch (err) {
-    res.status(500).json({ error: "User Already Exists!" });
+    res.status(500).json({ error: "Error Occured" });
   }
 };

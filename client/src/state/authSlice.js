@@ -20,6 +20,9 @@ export const authSlice = createSlice({
             state.user=action.payload.user
             state.token=action.payload.token
         },
+        setProfileUpdate:(state, action)=>{
+            state.user.picturePath=action.payload.picturePath
+        },
         setLogout:(state)=>{
             state.user=null
             state.token=null
@@ -44,9 +47,7 @@ export const authSlice = createSlice({
         setIsEditing: (state, action) => {
             state.isEditing = action.payload
         },
-        setProfileUpdate:(state, action)=>{
-            state.userDetails=action.payload.userDetails
-        },
+      
     }
 })
 

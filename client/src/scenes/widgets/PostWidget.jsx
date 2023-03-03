@@ -40,7 +40,7 @@ const PostWidget = ({
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
-  let isLiked = Boolean(likes[loggedInUserId]);
+  const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -116,7 +116,7 @@ const PostWidget = ({
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`${process.env.REACT_APP_BASE_URL}/assets/${picturePath}`}
+          src={picturePath}
         />
       )}
       <FlexBetween mt="0.25rem">
@@ -157,7 +157,6 @@ const PostWidget = ({
             {comments.map((comment, i) => (
               <Box key={`${name}-${i}`}>
                 <Divider />
-
                 <Typography
                   sx={{
                     color: main,

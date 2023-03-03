@@ -13,7 +13,7 @@ import {
   Typography,
   InputBase,
   useTheme,
-  Button,
+  // Button,
   IconButton,
   useMediaQuery,
 } from "@mui/material";
@@ -25,12 +25,14 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state/authSlice";
 import { postDataAPI } from "utils/fetchData";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
   const [post, setPost] = useState("");
+  const [loading, setLoading] = useState(false);
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
@@ -41,6 +43,7 @@ const MyPostWidget = ({ picturePath }) => {
 
   const handlePost = async () => {
     try {
+      setLoading(true);
       const formData = new FormData();
       formData.append("userId", _id);
       formData.append("description", post);
@@ -53,6 +56,7 @@ const MyPostWidget = ({ picturePath }) => {
       dispatch(setPosts({ posts: [data, ...posts] }));
       setImage(null);
       setPost("");
+      setLoading(false)
     } catch (error) {
       console.error(error);
     }
@@ -82,9 +86,16 @@ const MyPostWidget = ({ picturePath }) => {
           p="1rem"
         >
           <Dropzone
-            acceptedFiles=".jpg,.jpeg,.png"
+            accept={["image/jpeg", "image/png"]}
             multiple={false}
-            onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
+            onDrop={(acceptedFiles) => {
+              console.log(acceptedFiles, "acceptedFiles");
+              setImage(acceptedFiles[0]);
+            }}
+            onDropRejected={(rejectedFiles) => {
+              console.log(rejectedFiles, "rejectedFiles");
+              alert("Please upload only JPEG or PNG files.");
+            }}
           >
             {({ getRootProps, getInputProps }) => (
               <FlexBetween>
@@ -100,7 +111,11 @@ const MyPostWidget = ({ picturePath }) => {
                     <p>Add Image Here</p>
                   ) : (
                     <FlexBetween>
-                      <Typography>{image.name}</Typography>
+                      <img
+                        style={{ width: "6rem", height: "4rem" }}
+                        src={URL.createObjectURL(image)}
+                        alt="PostImage"
+                      />
                       <EditOutlined />
                     </FlexBetween>
                   )}
@@ -152,7 +167,8 @@ const MyPostWidget = ({ picturePath }) => {
             <MoreHorizOutlined sx={{ color: mediumMain }} />
           </FlexBetween>
         )}
-        <Button
+        <LoadingButton
+          loading={loading}
           disabled={!post}
           onClick={handlePost}
           sx={{
@@ -162,7 +178,7 @@ const MyPostWidget = ({ picturePath }) => {
           }}
         >
           POST
-        </Button>
+        </LoadingButton>
       </FlexBetween>
     </WidgetWrapper>
   );

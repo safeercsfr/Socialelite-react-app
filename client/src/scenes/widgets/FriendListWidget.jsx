@@ -4,23 +4,30 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFriends } from "state/authSlice";
+import { getDataAPI } from "utils/fetchData";
 
 const FriendListWidget = ({ userId }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
+  console.log(friends);
 
   const getFriends = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_BASE_URL}/users/${userId}/friends`,
-      {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    const data = await response.json();
-    dispatch(setFriends({ friends: data }));
+    try {
+      const {data} = await getDataAPI(`/users/${userId}/friends`,token)
+      dispatch(setFriends({ friends: data }));
+    } catch (error) {
+      console.error(error)
+    }
+    // const response = await fetch(
+    //   `${process.env.REACT_APP_BASE_URL}/users/${userId}/friends`,
+    //   {
+    //     method: "GET",
+    //     headers: { Authorization: `Bearer ${token}` },
+    //   }
+    // );
+    // const data = await response.json();
   };
 
   useEffect(() => {
@@ -28,7 +35,7 @@ const FriendListWidget = ({ userId }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <WidgetWrapper>
+    <WidgetWrapper style={{ position: "sticky", top: "7.3rem" }}>
       <Typography
         color={palette.neutral.dark}
         variant="h5"

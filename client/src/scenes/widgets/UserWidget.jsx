@@ -76,17 +76,17 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
 
   return (
     <WidgetWrapper
-      style={isProfile ? {} : { position: "sticky", top: "7.3rem" }}
+      // style={isProfile ? {} : { position: "sticky", top: "7.3rem" }}
     >
       {/* FIRST ROW */}
       <FlexBetween
         gap="0.5rem"
-        pb="1.1rem"
+        pb="0.5rem"
         onClick={() => navigate(`/profile/${userId}`)}
       >
-        <FlexBetween gap="1rem">
+        <FlexBetween gap="0.5rem">
           <UserImage image={picturePath} isProfile={isProfile} />
-          <Box>
+          <Box mb="1rem">
             <Typography
               variant="h4"
               color={dark}
@@ -180,5 +180,4 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
     </WidgetWrapper>
   );
 };
-
 export default UserWidget;
