@@ -5,7 +5,6 @@ const initialState = {
   user: null,
   token: null,
   posts: [],
-//   userData: null,
   isEditing: false,
 };
 
@@ -22,9 +21,6 @@ export const authSlice = createSlice({
     setUserData: (state, action) => {
       state.user = action.payload.user;
     },
-    setProfileUpdate: (state, action) => {
-      state.user.picturePath = action.payload.picturePath;
-    },
     setLogout: (state) => {
       state.user = null;
       state.token = null;
@@ -34,6 +30,13 @@ export const authSlice = createSlice({
         state.user.friends = action.payload.friends;
       } else {
         console.log("user friends non-existent");
+      }
+    },
+    setProfileImg: (state, action) => {
+      if (state.user) {
+        state.user.picturePath = action.payload.picturePath;
+      } else {
+        console.log("user image error");
       }
     },
     setPosts: (state, action) => {
@@ -60,7 +63,7 @@ export const {
   setPosts,
   setPost,
   setIsEditing,
-  setProfileUpdate,
   setUserData,
+  setProfileImg,
 } = authSlice.actions;
 export default authSlice.reducer;

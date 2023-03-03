@@ -273,6 +273,21 @@ const Form = () => {
                 ? "Don't have an account? Sign Up here."
                 : "Already have an account? Login here."}
             </Typography>
+            {isLogin && (
+              <Typography
+                sx={{
+                  textAlign: "right",
+                  textDecoration: "underline",
+                  color: palette.primary.main,
+                  "&:hover": {
+                    cursor: "pointer",
+                    color: palette.primary.light,
+                  },
+                }}
+              >
+                Forgot Password
+              </Typography>
+            )}
           </Box>
           <Toaster />
         </form>

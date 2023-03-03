@@ -3,9 +3,9 @@ import { IconButton, Input } from "@mui/material";
 import { CameraAlt } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { putDataAPI } from "utils/fetchData";
-import { setIsEditing, setProfileUpdate } from "state/authSlice";
+import { setProfileImg } from "state/authSlice";
 
-const ProfilePhotoEdit = () => {
+const ProfilePhotoEdit = ({ setIsEdit }) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
 
@@ -13,20 +13,17 @@ const ProfilePhotoEdit = () => {
     try {
       const selectedFile = e.target.files[0];
       const formData = new FormData();
-      formData.append("picture", selectedFile.name);
-      const { data } = await putDataAPI(
-        '/auth/update',
-        formData,
-        token
-      );
+      formData.append("picture", selectedFile);
+      const { data } = await putDataAPI('/auth/update', formData, token);
       if (data) {
-        dispatch(setProfileUpdate({ picturePath: data }));
-        dispatch(setIsEditing(false));
+        dispatch(setProfileImg({ picturePath: data.picturePath }));
+        setIsEdit(false);
       }
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   return (
     <>

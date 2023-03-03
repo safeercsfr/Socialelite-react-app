@@ -43,11 +43,11 @@ const MyPostWidget = ({ picturePath }) => {
 
   const handlePost = async () => {
     try {
-      setLoading(true);
       const formData = new FormData();
       formData.append("userId", _id);
       formData.append("description", post);
       if (image) {
+        setLoading(true);
         formData.append("picture", image);
         formData.append("picturePath", image.name);
       }
@@ -56,7 +56,7 @@ const MyPostWidget = ({ picturePath }) => {
       dispatch(setPosts({ posts: [data, ...posts] }));
       setImage(null);
       setPost("");
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       console.error(error);
     }

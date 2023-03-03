@@ -18,7 +18,6 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
-  const isEditing = useSelector((state) => state.isEditing);
   const user = useSelector((state) => state.user);
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
@@ -39,9 +38,7 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   let handleEditClick = () => {
-    if (isEditing === false) {
       dispatch(setIsEditing({ isEditing: true }));
-    }
   };
 
   if (!user) {

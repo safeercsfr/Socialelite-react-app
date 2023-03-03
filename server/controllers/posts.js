@@ -5,11 +5,12 @@ import cloudinary from "../config/cloudinary.js";
 /* CREATE */
 export const createPost = async (req, res) => {
   try {
+    const { description } = req.body;
+    const { id } = req.user
     const result = await cloudinary.uploader.upload(req.file.path, {folder:"Posts"} );
-    const { userId, description } = req.body;
-    const user = await User.findById(userId);
+    const user = await User.findById(id);
     const newPost = new Post({
-      userId,
+      userId:id,
       firstName: user.firstName,
       lastName: user.lastName,
       location: user.location,
@@ -24,7 +25,7 @@ export const createPost = async (req, res) => {
 
     res.status(201).json(newPost);
   } catch (err) {
-    res.status(409).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 

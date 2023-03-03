@@ -6,7 +6,7 @@ import cloudinary from "../config/cloudinary.js";
 // REGISTER USER
 export const register = async (req, res) => {
   try {
-    const result = await cloudinary.uploader.upload(req.file.path, {folder:"ProfileImage"} );
+    const result = await cloudinary.uploader.upload(req.file.path, {folder:"ProfileImage"});
     const {
       firstName,
       lastName,
@@ -60,6 +60,7 @@ export const login = async (req, res) => {
 export const updateProPic = async (req, res) => {
   try {
     const result = await cloudinary.uploader.upload(req.file.path, {folder:"ProfileImage"} );
+    console.log(result,'lll');
     const picturePath = result.secure_url
     const { id } = req.user;
     const updatedUser = await User.findByIdAndUpdate(

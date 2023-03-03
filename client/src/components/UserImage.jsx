@@ -1,25 +1,27 @@
 import { Box } from "@mui/system";
-// import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 import ProfilePhotoEdit from "scenes/widgets/ProfilePhotoEdit";
-import { setIsEditing } from "state/authSlice";
 
 const UserImage = ({ image, size = "60px", isProfile }) => {
-  const dispatch = useDispatch()
-  const isEditing = useSelector((state)=>state.isEditing)
-  // const [isEditing, setIsEditing] = useState(boolValue);
+  const [isEdit, setIsEdit] = useState(false);
 
   const handleBoxClick = () => {
-    dispatch(setIsEditing(true))
+    setIsEdit(true);
   };
 
-  if(isProfile){
-    return isEditing ? (<ProfilePhotoEdit />) : (
+  const handleEditDone = () => {
+    setIsEdit(false);
+  };
+
+  if (isProfile) {
+    return isEdit ? (
+      <ProfilePhotoEdit setIsEdit={handleEditDone} />
+    ) : (
       <Box
         width={size}
         height={size}
         sx={{ cursor: "pointer" }}
-        onClick={()=>handleBoxClick()}
+        onClick={() => handleBoxClick()}
       >
         <img
           style={{ objectFit: "cover", borderRadius: "50%" }}
