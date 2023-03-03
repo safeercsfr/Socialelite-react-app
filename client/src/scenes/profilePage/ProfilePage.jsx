@@ -1,29 +1,47 @@
 import { Box, useMediaQuery } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Navbar from "scenes/navbar/Navbar";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import UserWidget from "scenes/widgets/UserWidget";
-import { getDataAPI } from "utils/fetchData";
+import { getDataAPI, putDataAPI } from "utils/fetchData";
+import { setIsEditing } from "state/authSlice";
+import UserEdit from "scenes/widgets/UserEdit";
+import { toast, Toaster } from "react-hot-toast";
+import { setUserData } from "state/authSlice";
 
 const ProfilePage = () => {
-  const [user, setUser] = useState(null);
+  const isEditing = useSelector((state) => state.isEditing);
+  const dispatch = useDispatch();
   const { userId } = useParams();
   const token = useSelector((state) => state.token);
+  const user = useSelector((state) => state.user);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
   const getUser = async () => {
     try {
       const { data } = await getDataAPI(`/users/${userId}`, token);
-      setUser(data);
+      dispatch(setUserData({user:data}))
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
+  const onSave = async (userDetails) => {
+    try {
+      const { data } = await putDataAPI(`/users/${userId}`, userDetails, token);
+      dispatch(setUserData({user:data}))
+      dispatch(setIsEditing({ isEditing: false }));
+    } catch (err) {
+      toast.error(err.response.data.error, {
+        position: "bottom-center",
+      });
+      console.error(err);
+    }
+  };
   useEffect(() => {
     getUser();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -50,15 +68,30 @@ const ProfilePage = () => {
           <Box m="2rem 0" />
           <FriendListWidget userId={userId} />
         </Box>
-        <Box
+        {isEditing ? (
+         
+          <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
-          <MyPostWidget picturePath={user.picturePath} />
-          <Box m="2rem 0" />
-          <PostsWidget userId={userId} isProfile />
+           <UserEdit
+            user={user}
+            onCancel={() => dispatch(setIsEditing({ isEditing: false }))}
+            onSave={onSave}
+          />
         </Box>
+        ) : (
+          <Box
+            flexBasis={isNonMobileScreens ? "42%" : undefined}
+            mt={isNonMobileScreens ? undefined : "2rem"}
+          >
+            <MyPostWidget picturePath={user.picturePath} />
+            <Box m="2rem 0" />
+            <PostsWidget userId={userId} isProfile />
+          </Box>
+        )}
       </Box>
+      <Toaster />
     </Box>
   );
 };

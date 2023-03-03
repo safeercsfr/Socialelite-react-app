@@ -13,7 +13,7 @@ export const getUser = async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
-    const user = await User.find({})
+    const user = await User.find({});
     res.status(200).json(user);
   } catch (err) {
     res.status(404).json({ message: err.message });
@@ -71,17 +71,46 @@ export const addRemoveFriend = async (req, res) => {
   }
 };
 
+// export const updateUser = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { firstName, lastName, email, location, occupation } =
+//       req.body;
+
+//       let user = await User.findById(id)
+//       if(user){
+//         user.firstName = req.body.firstName || user.firstName
+//         user.email = req.body.email || req.email
+//       }
+
+//     const updatedUser = await User.findByIdAndUpdate(
+//       id,
+//       { firstName, lastName,email, location, occupation },
+//       { new: true }
+//     );
+//     res.status(200).json(updatedUser);
+//   } catch (err) {
+//     res.status(404).json({ message: err.message });
+//   }
+// };
+
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, location, occupation } = req.body;
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { firstName, lastName, location, occupation },
-      { new: true }
-    );
-    res.status(200).json(updatedUser);
+    const { firstName, lastName, email, location, occupation } = req.body;
+
+    let user = await User.findById(id);
+    if (user) {
+      user.firstName = firstName || user.firstName;
+      user.lastName = lastName || user.lastName;
+      user.email = email || user.email;
+      user.location = location || user.location;
+      user.occupation = occupation || user.occupation;
+
+      const updatedUser = await user.save(); // Save the changes to the user object
+      res.status(200).json(updatedUser);
+    }
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    res.status(404).json({ error: 'Email Already Exists!'});
   }
 };

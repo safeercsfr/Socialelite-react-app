@@ -12,7 +12,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLogin } from "state/authSlice";
+import { setLogin, setUserData } from "state/authSlice";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 import { toast, Toaster } from "react-hot-toast";
@@ -64,7 +64,7 @@ const Form = () => {
         formData.append(value, values[value]);
       }
       formData.append("picturePath", values.picture.name);
-      
+
       const { data } = await postDataAPI(`/auth/register`, formData);
       const savedUser = data;
       onSubmitProps.resetForm();
@@ -79,20 +79,24 @@ const Form = () => {
 
   const login = async (values, onSubmitProps) => {
     try {
-      const {data} = await postDataAPI(`/auth/login`,values)
-      const loggedIn = data
-        onSubmitProps.resetForm();
-        if (loggedIn) {
-          dispatch(
-            setLogin({
-              user: loggedIn.user,
-              token: loggedIn.token,
-            })
-          );
-          navigate("/home");
-        }
+      const { data } = await postDataAPI(`/auth/login`, values);
+      const loggedIn = data;
+      onSubmitProps.resetForm();
+      if (loggedIn) {
+        dispatch(
+          setLogin({
+            token: loggedIn.token,
+          })
+        );
+        dispatch(
+          setUserData({
+            user: loggedIn.user,
+          })
+        );
+        navigate("/home");
+      }
     } catch (err) {
-      (({response}) => {
+      (({ response }) => {
         toast.error(response.data.msg, {
           position: "bottom-center",
         });

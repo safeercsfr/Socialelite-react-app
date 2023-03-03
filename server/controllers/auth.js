@@ -60,10 +60,8 @@ export const login = async (req, res) => {
 export const updateProPic = async (req, res) => {
   try {
     const result = await cloudinary.uploader.upload(req.file.path, {folder:"ProfileImage"} );
-    console.log(result.secure_url,'result.secure_url');
     const picturePath = result.secure_url
     const { id } = req.user;
-    // const { picturePath } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       id,
       { picturePath },

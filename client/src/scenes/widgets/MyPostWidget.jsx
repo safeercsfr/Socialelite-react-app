@@ -89,11 +89,9 @@ const MyPostWidget = ({ picturePath }) => {
             accept={["image/jpeg", "image/png"]}
             multiple={false}
             onDrop={(acceptedFiles) => {
-              console.log(acceptedFiles, "acceptedFiles");
               setImage(acceptedFiles[0]);
             }}
             onDropRejected={(rejectedFiles) => {
-              console.log(rejectedFiles, "rejectedFiles");
               alert("Please upload only JPEG or PNG files.");
             }}
           >

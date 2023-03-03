@@ -20,14 +20,6 @@ const FriendListWidget = ({ userId }) => {
     } catch (error) {
       console.error(error)
     }
-    // const response = await fetch(
-    //   `${process.env.REACT_APP_BASE_URL}/users/${userId}/friends`,
-    //   {
-    //     method: "GET",
-    //     headers: { Authorization: `Bearer ${token}` },
-    //   }
-    // );
-    // const data = await response.json();
   };
 
   useEffect(() => {

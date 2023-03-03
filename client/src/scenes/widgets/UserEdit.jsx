@@ -9,6 +9,7 @@ const UserEdit = ({ user, onSave, onCancel }) => {
   const dark = palette.neutral.dark;
   const [firstName, setFirstName] = useState(user?.firstName);
   const [lastName, setLastName] = useState(user?.lastName);
+  const [email, setEmail] = useState(user?.email);
   const [location, setLocation] = useState(user?.location);
   const [occupation, setOccupation] = useState(user?.occupation);
 
@@ -17,6 +18,7 @@ const UserEdit = ({ user, onSave, onCancel }) => {
       ...user,
       firstName,
       lastName,
+      email,
       location,
       occupation,
     });
@@ -51,6 +53,14 @@ const UserEdit = ({ user, onSave, onCancel }) => {
               label="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Grid>
           <Grid item xs={12} md={6}>

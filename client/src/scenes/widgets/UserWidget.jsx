@@ -8,26 +8,27 @@ import { Box, Typography, Divider, useTheme } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useSelector } from "react-redux";
-import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import UserEdit from "./UserEdit";
-import { getDataAPI, putDataAPI } from "utils/fetchData";
+import { getDataAPI } from "utils/fetchData";
+import { setIsEditing, setUserData } from "state/authSlice";
 
 const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
-  const [user, setUser] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
+  const isEditing = useSelector((state) => state.isEditing);
+  const user = useSelector((state) => state.user);
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
+  const dispatch = useDispatch();
 
   const getUser = async () => {
     try {
       const { data } = await getDataAPI(`/users/${userId}`, token);
-      setUser(data);
+      dispatch(setUserData({user:data}))
     } catch (error) {
       console.error(error);
     }
@@ -37,29 +38,11 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
     getUser();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const onSave = async (userDetails) => {
-    try {
-      const { data } = await putDataAPI(`/users/${userId}`, userDetails, token);
-      setUser(data);
-      setIsEditing(false);
-    } catch (error) {
-      console.error(error);
+  let handleEditClick = () => {
+    if (isEditing === false) {
+      dispatch(setIsEditing({ isEditing: true }));
     }
   };
-
-  if (isEditing) {
-    return (
-      <UserEdit
-        user={user}
-        onCancel={() => setIsEditing(false)}
-        onSave={onSave}
-      />
-    );
-  }
 
   if (!user) {
     return null;
@@ -76,7 +59,7 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
 
   return (
     <WidgetWrapper
-      // style={isProfile ? {} : { position: "sticky", top: "7.3rem" }}
+    // style={isProfile ? {} : { position: "sticky", top: "7.3rem" }}
     >
       {/* FIRST ROW */}
       <FlexBetween
