@@ -8,6 +8,8 @@ import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
 import useOnline from "utils/useOnline";
+import PasswordReset from "scenes/PasswordReset/PasswordReset";
+import ForgotPassword from "scenes/ForgotPassword/ForgotPassword";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -38,6 +40,8 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route path="/" element={isAuth ? <HomePage /> : <LoginPage />} />
+            <Route path="/password-reset" element = {<PasswordReset/>}/>
+            <Route path="/forgotpassword/:id/:token" element = {<ForgotPassword/>}/>
             <Route
               path="/home"
               element={isAuth ? <HomePage /> : <Navigate to="/" />}

@@ -29,6 +29,33 @@ export const createPost = async (req, res) => {
   }
 };
 
+// export const createPost = async (req, res) => {
+//   try {
+//     const { description } = req.body;
+//     const { id } = req.user;
+//     const result = await cloudinary.uploader.upload(req.file.path, {
+//       folder: "Posts",
+//     });
+
+//     const newPost = new Post({
+//       description,
+//       author: id,
+//       image: result.secure_url,
+//       likes: {},
+//     });
+
+//     const savedPost = await newPost.save();
+//     const populatedPost = await Post.findById(savedPost._id)
+//       .populate("author", "username image")
+//       .populate("comments.author", "username image")
+//       .exec();
+
+//     res.status(201).json(populatedPost);
+//   } catch (error) {
+//     res.status(404).json({ message: error.message });
+//   }
+// };
+
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {

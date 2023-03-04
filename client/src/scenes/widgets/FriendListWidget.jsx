@@ -3,7 +3,7 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFriends } from "state/authSlice";
+import { setFriends, setLogout } from "state/authSlice";
 import { getDataAPI } from "utils/fetchData";
 
 const FriendListWidget = ({ userId }) => {
@@ -15,6 +15,7 @@ const FriendListWidget = ({ userId }) => {
   const getFriends = async () => {
     try {
       const {data} = await getDataAPI(`/users/${userId}/friends`,token)
+      console.log(data,'ddd');
       dispatch(setFriends({ friends: data }));
     } catch (error) {
       console.error(error)

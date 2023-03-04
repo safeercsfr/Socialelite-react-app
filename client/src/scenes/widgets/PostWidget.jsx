@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state/authSlice";
 import { patchDataAPI, postDataAPI, getDataAPI } from "utils/fetchData";
+import * as Yup from "yup";
 
 const PostWidget = ({
   postId,
@@ -37,6 +38,8 @@ const PostWidget = ({
   const [isComments, setIsComments] = useState(false);
   const [comment, setComment] = useState("");
   const [users, setUsers] = useState({});
+  const [errors, setErrors] = useState({})
+  console.log(Boolean(errors.comment),'Boolean(errors.comment)');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
@@ -45,6 +48,12 @@ const PostWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+
+  const validationSchema = Yup.object().shape({
+    comment: Yup.string()
+      .required("Comment is required")
+      .matches(/^\S.*$/, "Field must not start with white space"),
+  });
 
   const patchLike = async () => {
     try {
@@ -66,7 +75,10 @@ const PostWidget = ({
 
   const handleCommentSubmit = async (event) => {
     try {
-    event.preventDefault();
+      event.preventDefault();
+      const values = { comment };
+      await validationSchema.validate(values, { abortEarly: false });
+
       const { data } = await postDataAPI(
         `/posts/${postId}/comment`,
         { userId: loggedInUserId, comment },
@@ -75,8 +87,20 @@ const PostWidget = ({
       const updatedPost = data;
       dispatch(setPost({ post: updatedPost }));
       setComment("");
+      setErrors({})
     } catch (error) {
-      console.error(error);
+      if (error.name === 'ValidationError') {
+        const errors = error.inner.reduce(
+          (acc, err) => ({
+            ...acc,
+            [err.path]: err.message,
+          }),
+          {}
+        );
+        setErrors(errors);
+      } else {
+        console.error(error);
+      }
     }
   };
 
@@ -184,12 +208,11 @@ const PostWidget = ({
               <Box sx={{ display: "flex" }}>
                 <TextField
                   label="Add comment"
-                  // variant="filled"
                   value={comment}
                   onChange={handleCommentChange}
+                  error={Boolean(errors.comment)}
+                  helperText={errors.comment}
                   fullWidth
-                  required
-                  multiline
                   maxRows={1}
                   sx={{
                     borderRadius: "20px",

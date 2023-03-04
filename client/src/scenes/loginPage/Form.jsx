@@ -10,13 +10,14 @@ import {
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin, setUserData } from "state/authSlice";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 import { toast, Toaster } from "react-hot-toast";
 import { postDataAPI } from "utils/fetchData";
+
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -70,10 +71,18 @@ const Form = () => {
       onSubmitProps.resetForm();
       if (savedUser) setPageType("login");
     } catch (err) {
-      toast.error(err.response.data.error, {
-        position: "bottom-center",
-      });
-      console.log(err);
+      if (err.response && err.response.data.error) {
+        err.response.data.error.forEach((err) => {
+          console.log(err);
+          toast.error(err, {
+            position: "bottom-center",
+          });
+        });
+      }
+      // toast.error(err.response.data.error, {
+      //   position: "bottom-center",
+      // });
+      // console.log(err);
     }
   };
 
@@ -274,7 +283,7 @@ const Form = () => {
                 : "Already have an account? Login here."}
             </Typography>
             {isLogin && (
-              <Typography
+              <Link to="/password-reset"><Typography
                 sx={{
                   textAlign: "right",
                   textDecoration: "underline",
@@ -285,8 +294,8 @@ const Form = () => {
                   },
                 }}
               >
-                Forgot Password
-              </Typography>
+                Reset Password
+              </Typography></Link>
             )}
           </Box>
           <Toaster />
