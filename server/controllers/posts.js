@@ -97,10 +97,14 @@ export const postComment = async (req, res) => {
     const { id } = req.params;
     const { comment, userId } = req.body;
     const post = await Post.findById(id);
-    post.comments.push({ coment: comment, author: userId });
-    await post.save();
+    post.comments.unshift({ coment: comment, author: userId });
+    const savedPost = await post.save();
+    const populatedPost = await Post.findById(savedPost._id)
+      .populate("author", "firstName lastName picturePath")
+      .populate("comments.author", "firstName lastName picturePath")
+      .exec();
 
-    res.status(200).json(post);
+    res.status(200).json(populatedPost);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }

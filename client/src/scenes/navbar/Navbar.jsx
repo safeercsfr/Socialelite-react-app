@@ -39,10 +39,16 @@ const Navbar = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
-  const fullName = `${user ? user.firstName : "user"} ${user ? user.lastName : "name"}`;
+  const fullName = `${user ? user.firstName : "user"} ${
+    user ? user.lastName : "name"
+  }`;
 
   return (
-    <FlexBetween padding="1rem 6%" sx={{ position: "sticky", top: 0, zIndex: 1 }} backgroundColor={alt}>
+    <FlexBetween
+      padding="1rem 6%"
+      sx={{ position: "sticky", top: 0, zIndex: 1 }}
+      backgroundColor={alt}
+    >
       <FlexBetween gap="1.75rem">
         <Typography
           fontWeight="bold"
@@ -75,7 +81,7 @@ const Navbar = () => {
 
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
-        <FlexBetween  gap="2rem">
+        <FlexBetween gap="2rem">
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <LightMode sx={{ fontSize: "25px" }} />
@@ -107,7 +113,13 @@ const Navbar = () => {
               <MenuItem value={fullName}>
                 <Typography>{fullName}</Typography>
               </MenuItem>
-              <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  dispatch(setLogout());
+                }}
+              >
+                Log Out
+              </MenuItem>
             </Select>
           </FormControl>
         </FlexBetween>

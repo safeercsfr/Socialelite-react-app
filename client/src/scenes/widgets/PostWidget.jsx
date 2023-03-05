@@ -71,6 +71,8 @@ const PostWidget = ({
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
+    setErrors({})
+    
   };
 
   const handleCommentSubmit = async (event) => {
