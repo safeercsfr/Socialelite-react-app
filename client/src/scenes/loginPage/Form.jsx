@@ -9,7 +9,7 @@ import {
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin, setUserData } from "state/authSlice";
 import Dropzone from "react-dropzone";
@@ -22,7 +22,19 @@ const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  password: yup
+    .string()
+    .required("required")
+    .min(8, "Password must be at least 8 characters long")
+    .max(20, "Password must be at most 20 characters long")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
+    .matches(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "Password must contain at least one special character"
+    ),
+
   location: yup.string().required("required"),
   occupation: yup.string().required("required"),
   picture: yup.string().required("required"),
@@ -30,7 +42,18 @@ const registerSchema = yup.object().shape({
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  password: yup
+    .string()
+    .required("required")
+    .min(8, "Password must be at least 8 characters long")
+    .max(20, "Password must be at most 20 characters long")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
+    .matches(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "Password must contain at least one special character"
+    ),
 });
 
 const initialValuesRegister = {
@@ -76,16 +99,11 @@ const Form = () => {
       setLoading(false);
       if (err.response && err.response.data.error) {
         err.response.data.error.forEach((err) => {
-          console.log(err);
           toast.error(err, {
             position: "bottom-center",
           });
         });
       }
-      // toast.error(err.response.data.error, {
-      //   position: "bottom-center",
-      // });
-      // console.log(err);
     }
   };
 
@@ -113,7 +131,6 @@ const Form = () => {
           position: "bottom-center",
         });
       })(err);
-      console.log(err);
     }
   };
 
@@ -287,19 +304,21 @@ const Form = () => {
                 : "Already have an account? Login here."}
             </Typography>
             {isLogin && (
-              <Link to="/password-reset"><Typography
-                sx={{
-                  textAlign: "right",
-                  textDecoration: "underline",
-                  color: palette.primary.main,
-                  "&:hover": {
-                    cursor: "pointer",
-                    color: palette.primary.light,
-                  },
-                }}
-              >
-                Reset Password
-              </Typography></Link>
+              <Link to="/password-reset">
+                <Typography
+                  sx={{
+                    textAlign: "right",
+                    textDecoration: "underline",
+                    color: palette.primary.main,
+                    "&:hover": {
+                      cursor: "pointer",
+                      color: palette.primary.light,
+                    },
+                  }}
+                >
+                  Reset Password
+                </Typography>
+              </Link>
             )}
           </Box>
           <Toaster />

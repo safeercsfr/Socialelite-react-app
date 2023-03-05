@@ -93,17 +93,20 @@ export const updateUser = async (req, res) => {
       user.email = email || user.email;
       user.location = location || user.location;
       user.occupation = occupation || user.occupation;
-      
-      const isMatch = await bcrypt.compare(oldPassword, user.password);
-      if (!isMatch)
-        return res.status(400).json({ error: "Invalid Old Password. " });
+      if (oldPassword) {
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch)
+          return res.status(400).json({ error: "Invalid Old Password. " });
 
-      if (newPassword == confirmPassword) {
-        const salt = await bcrypt.genSalt();
-        const passwordHash = await bcrypt.hash(confirmPassword, salt);
-        user.password = passwordHash;
-      }else{
-        return res.status(400).json({ error: "Old password not same to new password" });
+        if (newPassword == confirmPassword) {
+          const salt = await bcrypt.genSalt();
+          const passwordHash = await bcrypt.hash(confirmPassword, salt);
+          user.password = passwordHash;
+        } else {
+          return res
+            .status(400)
+            .json({ error: "Old password not same to new password" });
+        }
       }
 
       const updatedUser = await user.save(); // Save the changes to the user object

@@ -3,21 +3,65 @@ import { Button } from "@mui/material";
 import { EditOutlined } from "@mui/icons-material";
 import { useState } from "react";
 import WidgetWrapper from "components/WidgetWrapper";
+import * as yup from "yup";
+
+const passwordSchema = yup.object().shape({
+  oldPassword: yup.string().required("Required"),
+  newPassword: yup
+    .string()
+    .required("Required")
+    .min(8, "Password must be at least 8 characters long")
+    .max(20, "Password must be at most 20 characters long")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
+    .matches(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "Password must contain at least one special character"
+    ),
+  confirmPassword: yup
+    .string()
+    .required("Required")
+    .oneOf([yup.ref("newPassword")], "Passwords must match"),
+});
 
 const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formValues, setFormValues] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [formErrors, setFormErrors] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
+  };
 
   const handleSave = () => {
-    onPasswordSave({
-      ...user,
-      oldPassword,
-      newPassword,
-      confirmPassword,
-    });
+    passwordSchema
+      .validate(formValues, { abortEarly: false })
+      .then(() => {
+        onPasswordSave({
+          ...user,
+          oldPassword: formValues.oldPassword,
+          newPassword: formValues.newPassword,
+          confirmPassword: formValues.confirmPassword,
+        });
+      })
+      .catch((errors) => {
+        const validationErrors = {};
+        errors.inner.forEach((error) => {
+          validationErrors[error.path] = error.message;
+        });
+        setFormErrors(validationErrors);
+      });
   };
   return (
     <WidgetWrapper>
@@ -38,8 +82,11 @@ const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
               fullWidth
               label="Old Password"
               type="password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
+              name="oldPassword"
+              value={formValues.oldPassword}
+              onChange={handleChange}
+              error={!!formErrors.oldPassword}
+              helperText={formErrors.oldPassword}
             />
           </Grid>
           <Grid item xs={12}>
@@ -47,8 +94,11 @@ const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
               fullWidth
               label="New Password"
               type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              name="newPassword"
+              value={formValues.newPassword}
+              onChange={handleChange}
+              error={!!formErrors.newPassword}
+              helperText={formErrors.newPassword}
             />
           </Grid>
           <Grid item xs={12}>
@@ -56,8 +106,11 @@ const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
               fullWidth
               label="Confirm Password"
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              name="confirmPassword"
+              value={formValues.confirmPassword}
+              onChange={handleChange}
+              error={!!formErrors.confirmPassword}
+              helperText={formErrors.confirmPassword}
             />
           </Grid>
         </Grid>
@@ -71,9 +124,7 @@ const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
               variant="contained"
               color="primary"
               onClick={handleSave}
-              disabled={
-                !oldPassword || !newPassword || !confirmPassword || newPassword !== confirmPassword
-              }
+              disabled={!formValues}
             >
               Save
             </Button>

@@ -150,6 +150,7 @@ export const sendpasswordlink = async (req, res) => {
     const token = jwt.sign({ _id: userfind._id }, process.env.JWT_SECRET, {
       expiresIn: "120s",
     });
+    
     console.log(token,'userfind');
   
     const setusertoken = await User.findByIdAndUpdate(

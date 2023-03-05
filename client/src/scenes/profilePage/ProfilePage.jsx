@@ -32,7 +32,10 @@ const ProfilePage = () => {
 
   const onSave = async (userDetails) => {
     try {
+      console.log(userDetails,token,'lll');
+      console.log('kkkkkkkkkkkk',userId);
       const { data } = await putDataAPI(`/users/${userId}`, userDetails, token);
+      console.log('kkkkkkkkkkkk',data);
       dispatch(setUserData({ user: data }));
       dispatch(setIsEditing({ isEditing: false }));
     } catch (err) {

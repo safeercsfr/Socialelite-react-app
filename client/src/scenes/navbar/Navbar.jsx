@@ -49,7 +49,6 @@ const Navbar = () => {
       ? dispatch(setIsMessage({ isMessage: false }))
       : dispatch(setIsMessage({ isMessage: true }));
   };
-  console.log(isMessage);
   return (
     <FlexBetween
       padding="1rem 6%"
@@ -96,9 +95,9 @@ const Navbar = () => {
               <DarkMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          <IconButton onClick={handleMessage}>
-            <Message sx={{ fontSize: "25px", color: "black" }} />
-          </IconButton>
+          {/* <IconButton onClick={handleMessage}> */}
+            <Message onClick={handleMessage} sx={{ fontSize: "25px",cursor:"pointer" }} />
+          {/* </IconButton> */}
           <Notifications sx={{ fontSize: "25px" }} />
           <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard" value={fullName}>
@@ -181,7 +180,7 @@ const Navbar = () => {
             </IconButton>
             <Message
               sx={{ fontSize: "25px" }}
-              onClick={() => console.log("ki")}
+              onClick={handleMessage}
             />
             <Notifications sx={{ fontSize: "25px" }} />
             <Help sx={{ fontSize: "25px" }} />
