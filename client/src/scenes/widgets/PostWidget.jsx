@@ -18,10 +18,10 @@ import {
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state/authSlice";
-import { patchDataAPI, postDataAPI, getDataAPI } from "utils/fetchData";
+import { patchDataAPI, postDataAPI } from "utils/fetchData";
 import * as Yup from "yup";
 
 const PostWidget = ({
@@ -29,7 +29,7 @@ const PostWidget = ({
   postUserId,
   name,
   description,
-  location,
+  //location,
   picturePath,
   userPicturePath,
   likes,
@@ -37,9 +37,8 @@ const PostWidget = ({
 }) => {
   const [isComments, setIsComments] = useState(false);
   const [comment, setComment] = useState("");
-  const [users, setUsers] = useState({});
+  // const [users, setUsers] = useState({});
   const [errors, setErrors] = useState({})
-  console.log(Boolean(errors.comment),'Boolean(errors.comment)');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
@@ -68,6 +67,8 @@ const PostWidget = ({
       console.error(error);
     }
   };
+
+  
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
@@ -104,31 +105,31 @@ const PostWidget = ({
     }
   };
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const { data } = await getDataAPI("/users", token);
-        const users = data.reduce(
-          (acc, user) => ({
-            ...acc,
-            [user._id]: user,
-          }),
-          {}
-        );
-        setUsers(users);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchUsers();
-  }, [token]);
-
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     try {
+  //       const { data } = await getDataAPI("/users", token);
+  //       const users = data.reduce(
+  //         (acc, user) => ({
+  //           ...acc,
+  //           [user._id]: user,
+  //         }),
+  //         {}
+  //       );
+  //       setUsers(users);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+  //   fetchUsers();
+  // }, [token]);
+    
   return (
     <WidgetWrapper m="2rem 0">
       <Friend
         friendId={postUserId}
         name={name}
-        subtitle={location}
+        //subtitle={location}
         userPicturePath={userPicturePath}
       />
       <Typography color={main} sx={{ mt: "1rem" }}>
@@ -179,7 +180,7 @@ const PostWidget = ({
             }}
           >
             {comments.map((comment, i) => (
-              <Box key={`${name}-${i}`}>
+              <Box key={`${i}`}>
                 <Divider />
                 <Typography
                   sx={{
@@ -192,12 +193,10 @@ const PostWidget = ({
                   <Avatar
                     sx={{ width: 30, height: 30, marginRight: "1rem" }}
                     alt="user Image"
-                    src={`${process.env.REACT_APP_BASE_URL}/assets/${
-                      users[comment.userId]?.picturePath
-                    }`}
+                    src={comment?.author?.picturePath}
                   />
-                  <strong>{users[comment.userId]?.firstName} </strong>
-                  <Box sx={{ marginLeft: "0.65rem" }}>{comment.comment}</Box>
+                  <strong>{comment?.author?.firstName + ' ' + comment?.author?.lastName} </strong>
+                  <Box sx={{ marginLeft: "0.65rem" }}>{comment.coment}</Box>
                 </Typography>
               </Box>
             ))}

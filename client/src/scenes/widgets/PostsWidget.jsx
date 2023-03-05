@@ -12,7 +12,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const getPosts = async () => {
     try {
       const { data } = await getDataAPI("/posts", token);
-      console.log(data);
       dispatch(setPosts({ posts: data }));
     } catch (error) {
       console.error(error);
@@ -34,11 +33,37 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       getPosts();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
+    
   // Only render posts if there are posts to display
   return (
     <>
       {posts.length > 0 &&
+        posts.map(
+          ({
+            _id,
+            author,
+            content,
+            //location,
+            image,
+            likes,
+            comments,
+          }) => (
+            <PostWidget
+            key={_id}
+            postId={_id}
+            postUserId={author._id}
+            name={`${author.firstName} ${author.lastName}`}
+            description={content}
+            //location={location}
+            picturePath={image}
+            userPicturePath={author.picturePath}
+            likes={likes}
+            comments={comments}
+            isProfile
+            />
+          )
+        )}
+      {/* {posts.length > 0 &&
         posts.map(
           ({
             _id,
@@ -66,7 +91,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
               isProfile
             />
           )
-        )}
+        )} */}
     </>
   );
 };

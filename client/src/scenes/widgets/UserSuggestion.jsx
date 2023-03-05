@@ -1,15 +1,15 @@
 import { Typography, useTheme } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
-import UserImage from "components/UserImage";
+// import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
 
 
 const UserSuggestion = () => {
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
-  const main = palette.neutral.main;
+  // const main = palette.neutral.main;
   const medium = palette.neutral.medium;
-  const imagePath = `${process.env.REACT_APP_BASE_URL}/assets/ads2.jpg`
+  // const imagePath = `${process.env.REACT_APP_BASE_URL}/assets/ads2.jpg`
 
   return (
     <WidgetWrapper style={{ position: "sticky", top: "7.3rem" }}>
