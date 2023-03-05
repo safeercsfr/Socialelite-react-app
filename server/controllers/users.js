@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import bcrypt from "bcrypt";
 
 /* READ */
 export const getUser = async (req, res) => {
@@ -71,33 +72,19 @@ export const addRemoveFriend = async (req, res) => {
   }
 };
 
-// export const updateUser = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { firstName, lastName, email, location, occupation } =
-//       req.body;
-
-//       let user = await User.findById(id)
-//       if(user){
-//         user.firstName = req.body.firstName || user.firstName
-//         user.email = req.body.email || req.email
-//       }
-
-//     const updatedUser = await User.findByIdAndUpdate(
-//       id,
-//       { firstName, lastName,email, location, occupation },
-//       { new: true }
-//     );
-//     res.status(200).json(updatedUser);
-//   } catch (err) {
-//     res.status(404).json({ message: err.message });
-//   }
-// };
-
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, email, location, occupation } = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      location,
+      occupation,
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    } = req.body;
 
     let user = await User.findById(id);
     if (user) {
@@ -106,11 +93,23 @@ export const updateUser = async (req, res) => {
       user.email = email || user.email;
       user.location = location || user.location;
       user.occupation = occupation || user.occupation;
+      
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch)
+        return res.status(400).json({ error: "Invalid Old Password. " });
+
+      if (newPassword == confirmPassword) {
+        const salt = await bcrypt.genSalt();
+        const passwordHash = await bcrypt.hash(confirmPassword, salt);
+        user.password = passwordHash;
+      }else{
+        return res.status(400).json({ error: "Old password not same to new password" });
+      }
 
       const updatedUser = await user.save(); // Save the changes to the user object
       res.status(200).json(updatedUser);
     }
   } catch (err) {
-    res.status(404).json({ error: 'Email Already Exists!'});
+    res.status(404).json({ error: "Email Already Exists!" });
   }
 };

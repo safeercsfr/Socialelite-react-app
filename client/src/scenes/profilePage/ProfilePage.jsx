@@ -24,7 +24,7 @@ const ProfilePage = () => {
   const getUser = async () => {
     try {
       const { data } = await getDataAPI(`/users/${userId}`, token);
-      dispatch(setUserData({user:data}))
+      dispatch(setUserData({ user: data }));
     } catch (error) {
       console.error(error);
     }
@@ -33,7 +33,7 @@ const ProfilePage = () => {
   const onSave = async (userDetails) => {
     try {
       const { data } = await putDataAPI(`/users/${userId}`, userDetails, token);
-      dispatch(setUserData({user:data}))
+      dispatch(setUserData({ user: data }));
       dispatch(setIsEditing({ isEditing: false }));
     } catch (err) {
       toast.error(err.response.data.error, {
@@ -69,17 +69,16 @@ const ProfilePage = () => {
           <FriendListWidget userId={userId} />
         </Box>
         {isEditing ? (
-         
           <Box
-          flexBasis={isNonMobileScreens ? "42%" : undefined}
-          mt={isNonMobileScreens ? undefined : "2rem"}
-        >
-           <UserEdit
-            user={user}
-            onCancel={() => dispatch(setIsEditing({ isEditing: false }))}
-            onSave={onSave}
-          />
-        </Box>
+            flexBasis={isNonMobileScreens ? "42%" : undefined}
+            mt={isNonMobileScreens ? undefined : "2rem"}
+          >
+            <UserEdit
+              user={user}
+              onCancel={() => dispatch(setIsEditing({ isEditing: false }))}
+              onSave={onSave}
+            />
+          </Box>
         ) : (
           <Box
             flexBasis={isNonMobileScreens ? "42%" : undefined}

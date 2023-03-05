@@ -21,7 +21,7 @@ import {
   Close,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "state/authSlice";
+import { setMode, setLogout, setIsMessage } from "state/authSlice";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 
@@ -31,6 +31,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+  const isMessage = useSelector((state) => state.isMessage);
 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
@@ -43,6 +44,12 @@ const Navbar = () => {
     user ? user.lastName : "name"
   }`;
 
+  const handleMessage = () => {
+    isMessage
+      ? dispatch(setIsMessage({ isMessage: false }))
+      : dispatch(setIsMessage({ isMessage: true }));
+  };
+  console.log(isMessage);
   return (
     <FlexBetween
       padding="1rem 6%"
@@ -89,7 +96,9 @@ const Navbar = () => {
               <DarkMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          <Message sx={{ fontSize: "25px" }} />
+          <IconButton onClick={handleMessage}>
+            <Message sx={{ fontSize: "25px", color: "black" }} />
+          </IconButton>
           <Notifications sx={{ fontSize: "25px" }} />
           <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard" value={fullName}>
@@ -170,7 +179,10 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
+            <Message
+              sx={{ fontSize: "25px" }}
+              onClick={() => console.log("ki")}
+            />
             <Notifications sx={{ fontSize: "25px" }} />
             <Help sx={{ fontSize: "25px" }} />
             <FormControl variant="standard" value={fullName}>

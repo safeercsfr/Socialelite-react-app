@@ -6,12 +6,14 @@ import UserWidget from "scenes/widgets/UserWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import AdvertWidget from "scenes/widgets/AdvertWidget";
-import FriendListWidget from "scenes/widgets/FriendListWidget"
+import FriendListWidget from "scenes/widgets/FriendListWidget";
 import UserSuggestion from "scenes/widgets/UserSuggestion";
+import MessageWidget from "scenes/widgets/MessageWidget";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath } = useSelector((state) => state.user);
+  const isMessage = useSelector((state) => state.isMessage);
   return (
     <Box>
       <Navbar />
@@ -27,13 +29,13 @@ const HomePage = () => {
           <Box m="2rem 0" />
           <UserSuggestion />
         </Box>
-        <Box
+        {isMessage?<MessageWidget/>:<Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
           <MyPostWidget picturePath={picturePath} />
           <PostsWidget userId={_id} />
-        </Box>
+        </Box>}
         {isNonMobileScreens && (
           <Box flexBasis="26%">
             <AdvertWidget />
