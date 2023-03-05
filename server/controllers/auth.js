@@ -38,11 +38,11 @@ export const register = async (req, res) => {
     // Add input validation rules
     await Promise.all([
       body("firstName")
-        .isAlpha()
+        .matches(/^[a-zA-Z\s]+$/)
         .withMessage("First name must contain only letters")
         .run(req),
       body("lastName")
-        .isAlpha()
+        .matches(/^[a-zA-Z\s]+$/)
         .withMessage("Last name must contain only letters")
         .run(req),
       body("email").isEmail().withMessage("Invalid email address").run(req),
@@ -51,11 +51,11 @@ export const register = async (req, res) => {
         .withMessage("Password must be at least 8 characters long")
         .run(req),
       body("location")
-        .isAlpha()
+        .matches(/^[a-zA-Z\s]+$/)
         .withMessage("location must contain only letters")
         .run(req),
       body("occupation")
-        .isAlpha()
+        .matches(/^[a-zA-Z\s]+$/)
         .withMessage("occupation must contain only letters")
         .run(req),
     ]);

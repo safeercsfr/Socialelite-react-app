@@ -37,7 +37,6 @@ const PostWidget = ({
 }) => {
   const [isComments, setIsComments] = useState(false);
   const [comment, setComment] = useState("");
-  // const [users, setUsers] = useState({});
   const [errors, setErrors] = useState({})
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
@@ -104,25 +103,6 @@ const PostWidget = ({
       }
     }
   };
-
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     try {
-  //       const { data } = await getDataAPI("/users", token);
-  //       const users = data.reduce(
-  //         (acc, user) => ({
-  //           ...acc,
-  //           [user._id]: user,
-  //         }),
-  //         {}
-  //       );
-  //       setUsers(users);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-  //   fetchUsers();
-  // }, [token]);
     
   return (
     <WidgetWrapper m="2rem 0">

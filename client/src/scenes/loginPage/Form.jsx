@@ -17,7 +17,7 @@ import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 import { toast, Toaster } from "react-hot-toast";
 import { postDataAPI } from "utils/fetchData";
-
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -51,6 +51,7 @@ const initialValuesLogin = {
 
 const Form = () => {
   const [pageType, setPageType] = useState("login");
+  const [loading, setLoading] = useState(false);
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ const Form = () => {
     try {
       const formData = new FormData();
       for (let value in values) {
+        setLoading(true);
         formData.append(value, values[value]);
       }
       formData.append("picturePath", values.picture.name);
@@ -69,8 +71,10 @@ const Form = () => {
       const { data } = await postDataAPI(`/auth/register`, formData);
       const savedUser = data;
       onSubmitProps.resetForm();
+      setLoading(false);
       if (savedUser) setPageType("login");
     } catch (err) {
+      setLoading(false);
       if (err.response && err.response.data.error) {
         err.response.data.error.forEach((err) => {
           console.log(err);
@@ -251,7 +255,8 @@ const Form = () => {
 
           {/* BUTTONS */}
           <Box>
-            <Button
+            <LoadingButton
+              loading={loading}
               fullWidth
               type="submit"
               sx={{
@@ -263,7 +268,7 @@ const Form = () => {
               }}
             >
               {isLogin ? "LOGIN" : "REGISTER"}
-            </Button>
+            </LoadingButton>
             <Typography
               onClick={() => {
                 setPageType(isLogin ? "register" : "login");

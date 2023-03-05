@@ -3,46 +3,25 @@ import User from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
 
 /* CREATE */
-// export const createPost = async (req, res) => {
-//   try {
-//     const { description } = req.body;
-//     const { id } = req.user
-//     const result = await cloudinary.uploader.upload(req.file.path, {folder:"Posts"} );
-//     const user = await User.findById(id);
-//     const newPost = new Post({
-//       userId:id,
-//       firstName: user.firstName,
-//       lastName: user.lastName,
-//       location: user.location,
-//       description,
-//       userPicturePath: user.picturePath,
-//       picturePath: result.secure_url,
-//       likes: {},
-//       comments: [],
-//     });
-
-//     await newPost.save();
-
-//     res.status(201).json(newPost);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-
 export const createPost = async (req, res) => {
   try {
     const { description } = req.body;
     const { id } = req.user;
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "Posts",
-    });
 
-    const newPost = new Post({
-      content:description,
+    let post = {
+      content: description,
       author: id,
-      image: result.secure_url,
       likes: {},
-    });
+    };
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "Posts",
+      });
+      post.image = result.secure_url;
+    }
+
+    const newPost = new Post(post);
 
     const savedPost = await newPost.save();
     const populatedPost = await Post.findById(savedPost._id)
@@ -62,8 +41,9 @@ export const getFeedPosts = async (req, res) => {
     const post = await Post.find()
       .populate("author", "firstName lastName picturePath")
       .populate("comments.author", "firstName lastName picturePath")
+      .sort({ createdAt: -1 })
       .exec();
-      
+
     res.status(200).json(post);
   } catch (err) {
     res.status(404).json({ message: err.message });
@@ -73,12 +53,13 @@ export const getFeedPosts = async (req, res) => {
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const post = await Post.find({ userId }).find()
-          .populate("author", "firstName lastName picturePath")
-          .populate("comments.author", "firstName lastName picturePath")
-          .exec();
-          
-    res.status(200).json(post);
+    const posts = await Post.find({ author: userId })
+      .populate("author", "firstName lastName picturePath")
+      .populate("comments.author", "firstName lastName picturePath")
+      .sort({ createdAt: -1 })
+      .exec();
+
+    res.status(200).json(posts);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
