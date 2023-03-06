@@ -23,6 +23,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state/authSlice";
 import { patchDataAPI, postDataAPI } from "utils/fetchData";
 import * as Yup from "yup";
+import { format } from "timeago.js";
+import { textAlign, width } from "@mui/system";
 
 const PostWidget = ({
   postId,
@@ -34,17 +36,17 @@ const PostWidget = ({
   userPicturePath,
   likes,
   comments,
+  createdAt,
 }) => {
   const [isComments, setIsComments] = useState(false);
   const [comment, setComment] = useState("");
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
-  const [isLiked, setIsLiked] = useState(Boolean(likes[loggedInUserId]))
-  console.log(loggedInUserId);
-  console.log(isLiked);
-
+  const [isLiked, setIsLiked] = useState(
+    Boolean(likes[loggedInUserId ? loggedInUserId : ""])
+  );
   const likeCount = Object.keys(likes).length;
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -65,7 +67,6 @@ const PostWidget = ({
         token
       );
       const updatedPost = data;
-      console.log(updatedPost,'updatedPost//');
       dispatch(setPost({ post: updatedPost }));
     } catch (error) {
       console.error(error);
@@ -74,8 +75,7 @@ const PostWidget = ({
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
-    setErrors({})
-    
+    setErrors({});
   };
 
   const handleCommentSubmit = async (event) => {
@@ -92,9 +92,9 @@ const PostWidget = ({
       const updatedPost = data;
       dispatch(setPost({ post: updatedPost }));
       setComment("");
-      setErrors({})
+      setErrors({});
     } catch (error) {
-      if (error.name === 'ValidationError') {
+      if (error.name === "ValidationError") {
         const errors = error.inner.reduce(
           (acc, err) => ({
             ...acc,
@@ -105,16 +105,16 @@ const PostWidget = ({
         setErrors(errors);
       } else {
         console.error(error);
-      }
+      }
     }
   };
-    
+
   return (
     <WidgetWrapper m="2rem 0">
       <Friend
         friendId={postUserId}
         name={name}
-        //subtitle={location}
+        subtitle={format(createdAt)}
         userPicturePath={userPicturePath}
       />
       <Typography color={main} sx={{ mt: "1rem" }}>
@@ -180,8 +180,27 @@ const PostWidget = ({
                     alt="user Image"
                     src={comment?.author?.picturePath}
                   />
-                  <strong>{comment?.author?.firstName + ' ' + comment?.author?.lastName} </strong>
-                  <Box sx={{ marginLeft: "0.65rem" }}>{comment.coment}</Box>
+                  <strong>
+                    {comment?.author?.firstName +
+                      " " +
+                      comment?.author?.lastName}{" "}
+                  </strong>
+                  <Box
+                    sx={{
+                      marginLeft: "0.65rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "68%",
+                      textAlign: "right",
+                    }}
+                  >
+                    <Typography>{comment.coment}</Typography>
+                    <Box sx={{ textAlign: "end" }}>
+                      <Typography component="p" fontSize={10}>
+                        {format(comment.createdAt)}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Typography>
               </Box>
             ))}
