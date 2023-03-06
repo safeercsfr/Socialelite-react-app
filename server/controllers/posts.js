@@ -26,6 +26,7 @@ export const createPost = async (req, res) => {
     const populatedPost = await Post.findById(savedPost._id)
       .populate("author", "firstName lastName picturePath")
       .populate("comments.author", "firstName lastName picturePath")
+      .sort({ createdAt: -1 })
       .exec();
 
     res.status(201).json(populatedPost);
@@ -83,8 +84,13 @@ export const likePost = async (req, res) => {
       { likes: post.likes },
       { new: true }
     );
-
-    res.status(200).json(updatedPost);
+    const populatedPost = await Post.find({ author: updatedPost.author })
+      .populate("author", "firstName lastName picturePath")
+      .populate("comments.author", "firstName lastName picturePath")
+      .exec();
+      console.log(populatedPost[0]);
+    res.status(200).json(populatedPost[0]);
+    // res.status(200).json(updatedPost);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }

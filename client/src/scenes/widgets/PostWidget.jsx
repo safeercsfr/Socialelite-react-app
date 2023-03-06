@@ -41,7 +41,10 @@ const PostWidget = ({
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
-  const isLiked = Boolean(likes[loggedInUserId]);
+  const [isLiked, setIsLiked] = useState(Boolean(likes[loggedInUserId]))
+  console.log(loggedInUserId);
+  console.log(isLiked);
+
   const likeCount = Object.keys(likes).length;
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -55,19 +58,19 @@ const PostWidget = ({
 
   const patchLike = async () => {
     try {
+      setIsLiked(!isLiked);
       const { data } = await patchDataAPI(
         `/posts/${postId}/like`,
         loggedInUserId,
         token
       );
       const updatedPost = data;
+      console.log(updatedPost,'updatedPost//');
       dispatch(setPost({ post: updatedPost }));
     } catch (error) {
       console.error(error);
     }
   };
-
-  
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);

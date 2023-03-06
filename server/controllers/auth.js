@@ -3,9 +3,9 @@ import jwt from "jsonwebtoken";
 import { body, validationResult } from "express-validator";
 import User from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
-import sendEmail from "../utils/sendEmail.js";
-import Token from "../models/token.js";
-import crypto from "crypto";
+// import sendEmail from "../utils/sendEmail.js";
+// import Token from "../models/token.js";
+// import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
@@ -135,10 +135,10 @@ export const updateProPic = async (req, res) => {
 
 /*EMAIL VERIFICATION*/
 
-export const sendpasswordlink = async (req, res) => {
+export const sendPasswordLink = async (req, res) => {
 
   console.log(req.body);
-  const { email } = req.body;
+  const {email} = req.body
 
   if (!email) {
     res.status(401).json({ status: 401, message: "Enter Your Email" });
@@ -151,8 +151,6 @@ export const sendpasswordlink = async (req, res) => {
       expiresIn: "120s",
     });
     
-    console.log(token,'userfind');
-  
     const setusertoken = await User.findByIdAndUpdate(
       { _id: userfind._id },
       { verifytoken: token },
@@ -161,7 +159,7 @@ export const sendpasswordlink = async (req, res) => {
   
     if (setusertoken) {
       const mailOptions = {
-        from: process.env.NODEMAILER_FROM,
+        from: process.env.NODEMAILER_USER,
         to: email,
         subject: "Sending Email For password Reset",
         text: `This link valid for 2 minutes http://localhost:3000/forgotpassword/${userfind.id}/${setusertoken.verifytoken}`,

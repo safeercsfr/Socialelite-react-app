@@ -10,6 +10,8 @@ import { themeSettings } from "./theme";
 import useOnline from "utils/useOnline";
 import PasswordReset from "scenes/PasswordReset/PasswordReset";
 import ForgotPassword from "scenes/ForgotPassword/ForgotPassword";
+import Testing from "scenes/Sample/Testing";
+
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -42,6 +44,9 @@ function App() {
             <Route path="/" element={isAuth ? <HomePage /> : <LoginPage />} />
             <Route path="/password-reset" element = {<PasswordReset/>}/>
             <Route path="/forgotpassword/:id/:token" element = {<ForgotPassword/>}/>
+
+            {/* for testing purpose  */}
+            <Route path="/testing" element = {<Testing/>}/>
             <Route
               path="/home"
               element={isAuth ? <HomePage /> : <Navigate to="/" />}
