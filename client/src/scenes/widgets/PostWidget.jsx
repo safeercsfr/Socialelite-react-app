@@ -24,7 +24,6 @@ import { setPost } from "state/authSlice";
 import { patchDataAPI, postDataAPI } from "utils/fetchData";
 import * as Yup from "yup";
 import { format } from "timeago.js";
-import { textAlign, width } from "@mui/system";
 
 const PostWidget = ({
   postId,

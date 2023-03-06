@@ -1,11 +1,9 @@
-
 const Testing = () => {
   return (
     <div>
-      <h1>Sample Testing page</h1>
+      <h1>Testing purpose</h1>
     </div>
   )
 }
 
 export default Testing
-

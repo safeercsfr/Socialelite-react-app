@@ -1,35 +1,23 @@
-import { Box, Button, CircularProgress, TextField } from "@mui/material";
-import {
-  MDBCard,
-  MDBCardBody,
-  MDBCardImage,
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-} from "mdb-react-ui-kit";
-import React, { useEffect, useState } from "react";
+import { useTheme } from "@emotion/react";
+import { EditOutlined } from "@mui/icons-material";
+import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import WidgetWrapper from "components/WidgetWrapper";
+import { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { getDataAPI, postDataAPI } from "utils/fetchData";
 
-const ForgotPassword = () => {
+export const ForgotPassword = () => {
   const { id, token } = useParams();
   const history = useNavigate();
   const [data, setData] = useState(false);
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const theme = useTheme();
 
   const userValid = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/auth/forgotpassword/${id}/${token}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = response.data;
+      const { data } = await getDataAPI(`/auth/forgotpassword/${id}/${token}`);
       if (data.status === 201) {
         console.log("user valid");
       } else {
@@ -60,18 +48,9 @@ const ForgotPassword = () => {
       );
     } else {
       try {
-        const response = await axios.post(
-          `${process.env.REACT_APP_BASE_URL}/auth/${id}/${token}`,
-          {
-            password,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const data = response.data;
+        const { data } = await postDataAPI(`/auth/${id}/${token}`, {
+          password,
+        });
         if (data.status === 201) {
           setPassword("");
           setMessage(true);
@@ -94,101 +73,97 @@ const ForgotPassword = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <>
-      {data ? (
-        <form>
-          <MDBContainer className="my-5 main">
-            <MDBCard>
-              <MDBRow className="g-0 body">
-                <MDBCol md="6">
-                  <MDBCardImage
-                    src="https://cdn.mos.cms.futurecdn.net/pk2A58d5MnYCSGKAi2mGVS-1200-80.jpg"
-                    alt="login form"
-                    className="p-5 img-fluid"
-                    style={{
-                      objectFit: "cover",
-                      height: "100%",
-                      width: "100%",
-                      display: "inlineblock",
-                    }}
-                  />
-                </MDBCol>
-
-                <MDBCol md="6">
-                  <MDBCardBody className="d-flex flex-column mt-5 d-flex align-items-centeryy">
-                    {/* <div className='d-flex flex-row mt-2'>
-                      <MDBIcon fas icon="fa-doutone fa-hashtag fa-3x me-3" style={{ color: '#ff6219' }} />
-
-                      <span className="h1 fw-bold mb-0">HashTag</span>
-                    </div> */}
-                    {message ? (
-                      <p style={{ color: "green", fontWeight: "bold" }}>
-                        Passowrd updated successfully
-                      </p>
-                    ) : (
-                      ""
-                    )}
-
-                    <h5
-                      className="fw-normal my-4 pb-3"
-                      style={{ letterSpacing: "1px" }}
-                    >
-                      Enter your New Password
-                    </h5>
-                    <Box>
-                      <TextField
-                        name="password"
-                        label="Enter new Password"
-                        type="password"
-                        value={password}
-                        onChange={setval}
-                        margin="normal"
-                        variant="outlined"
-                        fullWidth
-                      />
-
-                      <Button
-                        onClick={sendpassword}
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                      >
-                        Send
-                      </Button>
-                      <Link to="/">
-                        <Button
-                          sx={{ marginTop: "10px" }}
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          fullWidth
-                        >
-                          Back to login page
-                        </Button>
-                      </Link>
-                    </Box>
-                  </MDBCardBody>
-                </MDBCol>
-              </MDBRow>
-            </MDBCard>
-          </MDBContainer>
-          <Toaster />
-        </form>
-      ) : (
+    <form>
+      <Box>
+        <Box
+          width="100%"
+          backgroundColor={theme.palette.background.alt}
+          p="1rem 6%"
+          textAlign="center"
+        >
+          <Typography fontWeight="bold" fontSize="32px" color="primary">
+            Socialelite
+          </Typography>
+        </Box>
         <Box
           sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "100vh",
+            height: "85vh",
           }}
         >
-          Loading... &nbsp;
-          <CircularProgress />
+          <WidgetWrapper>
+            <Box p="1rem" sx={{ width: "30rem", alignItems: "center" }}>
+              {message ? (
+                <p style={{ color: "green", fontWeight: "bold" }}>
+                  Passowrd updated successfully
+                </p>
+              ) : (
+                ""
+              )}
+              <Typography
+                variant="h4"
+                //   color={}
+                fontWeight="500"
+                mb="1rem"
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                {/* <EditOutlined sx={{ mr: "0.5rem" }} /> */}
+                Enter Your New Password
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    name="password"
+                    label="Enter new password"
+                    type="password"
+                    value={password}
+                    onChange={setval}
+                    margin="normal"
+                    variant="outlined"
+                    fullWidth
+                  />
+                </Grid>
+              </Grid>
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                mt="1rem"
+                sx={{
+                  button: {
+                    margin: "0 0.5rem",
+                  },
+                  "& button:first-of-type": {
+                    marginRight: 0,
+                  },
+                }}
+              >
+                <Button
+                  onClick={sendpassword}
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                >
+                  Send
+                </Button>
+                <Link to="/" style={{ textDecoration: 'none' }}>
+                  <Button
+                    sx={{ marginTop: "10px" }}
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                  >
+                    Back to login page
+                  </Button>
+                </Link>
+              </Box>
+            </Box>
+          </WidgetWrapper>
         </Box>
-      )}
-    </>
+      </Box>
+      <Toaster />
+    </form>
   );
 };
 
