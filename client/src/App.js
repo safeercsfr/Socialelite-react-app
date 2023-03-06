@@ -10,7 +10,7 @@ import { themeSettings } from "./theme";
 import useOnline from "utils/useOnline";
 import PasswordReset from "scenes/PasswordReset/PasswordReset";
 import ForgotPassword from "scenes/ForgotPassword/ForgotPassword";
-import Testing from "scenes/Sample/Testing";
+import Testing from "scenes/Testing/Testing";
 
 
 function App() {
