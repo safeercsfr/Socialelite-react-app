@@ -84,6 +84,10 @@ const MyPostWidget = ({ picturePath }) => {
       }
     }
   };
+  const handleChange=(e)=>{
+    setErrors({})
+    setPost(e.target.value)
+  }
 
   return (
     <WidgetWrapper>
@@ -91,7 +95,7 @@ const MyPostWidget = ({ picturePath }) => {
         <UserImage image={picturePath} />
         <InputBase
           placeholder="What's on your mind..."
-          onChange={(e) => setPost(e.target.value)}
+          onChange={handleChange}
           value={post}
           sx={{
             width: "100%",

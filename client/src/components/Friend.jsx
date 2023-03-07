@@ -1,14 +1,17 @@
-import { PersonAddOutlined, PersonRemoveOutlined, Delete  } from "@mui/icons-material";
+import {
+  PersonAddOutlined,
+  PersonRemoveOutlined,
+  Delete,
+} from "@mui/icons-material";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
-import { ConfirmToast } from 'react-confirm-toast'
+import { ConfirmToast } from "react-confirm-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends, setPosts } from "state/authSlice";
-import { patchDataAPI } from "utils/fetchData";
+import { deleteDataAPI, patchDataAPI } from "utils/fetchData";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import axios from "axios";
-
 
 const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
   const dispatch = useDispatch();
@@ -16,7 +19,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
-  
+
   const { palette } = useTheme();
   const primaryLight = palette.primary.light;
   const primaryDark = palette.primary.dark;
@@ -27,19 +30,21 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
 
   const patchFriend = async () => {
     try {
-      const {data} = await patchDataAPI(`/users/${_id}/${friendId}`,{},token)
+      const { data } = await patchDataAPI(
+        `/users/${_id}/${friendId}`,
+        {},
+        token
+      );
       dispatch(setFriends({ friends: data }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const deletePost = async ()=>{
-    const {data} = await axios.delete(`${process.env.REACT_APP_BASE_URL}/posts/${postId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    dispatch(setPosts({ posts: data }))
-  } 
+  const deletePost = async () => {
+    const { data } = await deleteDataAPI(`/posts/${postId}`, token);
+    dispatch(setPosts({ posts: data }));
+  };
 
   return (
     <FlexBetween>
@@ -69,23 +74,23 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
           </Typography>
         </Box>
       </FlexBetween>
-      {
-        friendId === _id ? 
+      {friendId === _id ? (
         <ConfirmToast
-	asModal={false}
-	customCancel={'Cancel'}
-	customConfirm={'Confirm'}
-	customFunction={deletePost}
-	message={'Do you want to continue and execute the function?'}
-	position={'bottom-left'}
-	showCloseIcon={true}
-	theme={'lilac'}
->
-<IconButton sx={{ backgroundColor: primaryLight, p: "0.6rem" }} >
+          asModal={false}
+          customCancel={"Cancel"}
+          customConfirm={"Confirm"}
+          customFunction={deletePost}
+          message={"Do you want to delete post?"}
+          position={"bottom-left"}
+          showCloseIcon={true}
+          theme={"light"}
+        >
+          <IconButton sx={{ backgroundColor: primaryLight, p: "0.6rem" }}>
             <Delete />
           </IconButton>
-</ConfirmToast> :
-          <IconButton
+        </ConfirmToast>
+      ) : (
+        <IconButton
           onClick={() => patchFriend()}
           sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
         >
@@ -95,8 +100,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
             <PersonAddOutlined sx={{ color: primaryDark }} />
           )}
         </IconButton>
-      }
-      
+      )}
     </FlexBetween>
   );
 };

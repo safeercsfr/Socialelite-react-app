@@ -199,7 +199,7 @@ const PostWidget = ({
                     <Typography>{comment.coment}</Typography>
                     <Box sx={{ textAlign: "end" }}>
                       <Typography component="p" fontSize={10}>
-                      {timeago.format(createdAt) }
+                      {timeago.format(comment.createdAt) }
                       </Typography>
                     </Box>
                   </Box>
