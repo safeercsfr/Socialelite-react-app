@@ -23,7 +23,7 @@ export const createPost = async (req, res) => {
     const newPost = new Post(post);
 
     const savedPost = await newPost.save();
-    const populatedPost = await Post.findById(savedPost._id)
+    const populatedPost = await Post.findById(savedPost._id,{isDelete:false})
       .populate("author", "firstName lastName picturePath")
       .populate("comments.author", "firstName lastName picturePath")
       .sort({ createdAt: -1 })
@@ -38,7 +38,7 @@ export const createPost = async (req, res) => {
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {
-    const post = await Post.find()
+    const post = await Post.find({isDelete:false})
       .populate("author", "firstName lastName picturePath")
       .populate("comments.author", "firstName lastName picturePath")
       .sort({ createdAt: -1 })
@@ -53,7 +53,7 @@ export const getFeedPosts = async (req, res) => {
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const posts = await Post.find({ author: userId })
+    const posts = await Post.find({ author: userId, isDelete:false })
       .populate("author", "firstName lastName picturePath")
       .populate("comments.author", "firstName lastName picturePath")
       .sort({ createdAt: -1 })
@@ -84,11 +84,10 @@ export const likePost = async (req, res) => {
       { likes: post.likes },
       { new: true }
     );
-    const populatedPost = await Post.find({ author: updatedPost.author })
+    const populatedPost = await Post.find({ author: updatedPost.author, isDelete: false })
       .populate("author", "firstName lastName picturePath")
       .populate("comments.author", "firstName lastName picturePath")
       .exec();
-      console.log(populatedPost[0]);
     res.status(200).json(populatedPost[0]);
     // res.status(200).json(updatedPost);
   } catch (err) {
@@ -104,7 +103,7 @@ export const postComment = async (req, res) => {
     const post = await Post.findById(id);
     post.comments.unshift({ coment: comment, author: userId });
     const savedPost = await post.save();
-    const populatedPost = await Post.findById(savedPost._id)
+    const populatedPost = await Post.findById(savedPost._id,{isDelete:false})
       .populate("author", "firstName lastName picturePath")
       .populate("comments.author", "firstName lastName picturePath")
       .exec();
@@ -114,3 +113,21 @@ export const postComment = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+export const deletePost = async (req, res)=>{
+  try {
+  const {postId} = req.params;
+  const updatedPost = await Post.findByIdAndUpdate(
+    postId,
+    {isDelete: true},
+    { new: true }
+  )
+  const populatedPost = await Post.find({  isDelete: false })
+  .populate("author", "firstName lastName picturePath")
+  .populate("comments.author", "firstName lastName picturePath")
+  .exec();
+  res.status(200).json(populatedPost)
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+}

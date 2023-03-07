@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state/authSlice";
 import { postDataAPI } from "utils/fetchData";
 import LoadingButton from "@mui/lab/LoadingButton";
+import * as Yup from "yup";
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const MyPostWidget = ({ picturePath }) => {
   const [image, setImage] = useState(null);
   const [post, setPost] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
@@ -41,8 +43,16 @@ const MyPostWidget = ({ picturePath }) => {
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
 
+  const postSchema = Yup.object().shape({
+    post: Yup.string()
+      .required("Comment is required")
+      .matches(/^\S.*$/, "Field must not start with white space"),
+  });
+
   const handlePost = async () => {
     try {
+      await postSchema.validate({ post }, { abortEarly: false });
+
       const formData = new FormData();
       formData.append("userId", _id);
       formData.append("description", post);
@@ -57,8 +67,21 @@ const MyPostWidget = ({ picturePath }) => {
       setImage(null);
       setPost("");
       setLoading(false);
+      setErrors({});
     } catch (error) {
       console.error(error);
+      if (error.name === "ValidationError") {
+        const errors = error.inner.reduce(
+          (acc, err) => ({
+            ...acc,
+            [err.path]: err.message,
+          }),
+          {}
+        );
+        setErrors(errors);
+      } else {
+        console.error(error);
+      }
     }
   };
 
@@ -75,9 +98,21 @@ const MyPostWidget = ({ picturePath }) => {
             backgroundColor: palette.neutral.light,
             borderRadius: "2rem",
             padding: "1rem 2rem",
+            border: errors.post ? "1px solid red" : "none", // add border style for error
           }}
         />
       </FlexBetween>
+      {errors.post && (
+        <Typography
+          color="red"
+          sx={{
+            marginTop: "0.5rem",
+            textAlign: "center",
+          }}
+        >
+          {errors.post}
+        </Typography>
+      )}
       {isImage && (
         <Box
           border={`1px solid ${medium}`}

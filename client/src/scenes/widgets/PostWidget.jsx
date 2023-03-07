@@ -44,8 +44,9 @@ const PostWidget = ({
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
   const [isLiked, setIsLiked] = useState(
-    Boolean(likes[loggedInUserId ? loggedInUserId : ""])
+    Boolean(likes[loggedInUserId])
   );
+  console.log(isLiked,'k');
   const likeCount = Object.keys(likes).length;
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -56,7 +57,6 @@ const PostWidget = ({
       .required("Comment is required")
       .matches(/^\S.*$/, "Field must not start with white space"),
   });
-
   const patchLike = async () => {
     try {
       setIsLiked(!isLiked);
@@ -115,6 +115,8 @@ const PostWidget = ({
         name={name}
         subtitle={format(createdAt)}
         userPicturePath={userPicturePath}
+        postId={postId}
+        
       />
       <Typography color={main} sx={{ mt: "1rem" }}>
         {description}
