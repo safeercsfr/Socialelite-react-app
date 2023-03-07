@@ -316,7 +316,7 @@ const Form = () => {
                     },
                   }}
                 >
-                  Reset Password
+                  Forgot Password
                 </Typography>
               </Link>
             )}

@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state/authSlice";
 import { patchDataAPI, postDataAPI } from "utils/fetchData";
 import * as Yup from "yup";
-import { format } from "timeago.js";
+import TimeAgo from 'timeago.js';
 
 const PostWidget = ({
   postId,
@@ -51,6 +51,7 @@ const PostWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+  const timeago = new TimeAgo()
 
   const validationSchema = Yup.object().shape({
     comment: Yup.string()
@@ -113,7 +114,7 @@ const PostWidget = ({
       <Friend
         friendId={postUserId}
         name={name}
-        subtitle={format(createdAt)}
+        subtitle={timeago.format(createdAt) }
         userPicturePath={userPicturePath}
         postId={postId}
         
@@ -198,7 +199,7 @@ const PostWidget = ({
                     <Typography>{comment.coment}</Typography>
                     <Box sx={{ textAlign: "end" }}>
                       <Typography component="p" fontSize={10}>
-                        {format(comment.createdAt)}
+                      {timeago.format(createdAt) }
                       </Typography>
                     </Box>
                   </Box>

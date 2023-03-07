@@ -1,5 +1,4 @@
 import { useTheme } from "@emotion/react";
-import { EditOutlined } from "@mui/icons-material";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useState } from "react";
