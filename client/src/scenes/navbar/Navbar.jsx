@@ -9,7 +9,10 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Avatar,
 } from "@mui/material";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Search,
   Message,
@@ -98,64 +101,69 @@ const Navbar = () => {
               <Search />
             </IconButton>
             {search !== "" || open === true ? (
-              <div
-                className="search-result"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  position: "absolute",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+              <Box
+                display="flex"
+                flexDirection="column"
+                position="absolute"
+                backgroundColor="white"
+                marginTop="15rem"
+                borderRadius="10px"
+                width="300px" // adjust based on your preference
+                boxShadow={4} // add shadow effect
+                p={1} // add some padding
               >
-                <span
+                <IconButton
                   onClick={() => [setOpen(false), setSearch("")]}
-                  style={{ color: "white", height: "5px", marginLeft: "468px" }}
+                  style={{ alignSelf: "flex-end" }} // align to the right side
                 >
-                  <IoCloseCircleOutline size={20} />
-                </span>
-                <div className="users-container">
-                  {users?.map((user1) =>
-                    user1.firstName.toLowerCase().includes(search) |
-                      user1.lastName.toLowerCase().includes(search) &&
-                    user._id !== user1.id ? (
-                      <Link
-                        style={{ textDecoration: "none" }}
-                        to={`/profile/${user1._id}`}
-                      >
-                        <div
-                          className="user-container"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+                {users?.length > 0 ? (
+                  <Box>
+                    {users.map((user1) =>
+                      user1.firstName.toLowerCase().includes(search) |
+                        user1.lastName.toLowerCase().includes(search) &&
+                      user._id !== user1.id ? (
+                        <Link
+                          key={user1._id} // add a unique key for each item
+                          style={{ textDecoration: "none" }}
+                          to={`/profile/${user1._id}`}
                         >
-                          <img
-                            className="search-image"
-                            src={`${user1.picturePath}`}
-                            alt="userImage"
-                            style={{
-                              height: "50px",
-                              width: "50px",
-                              borderRadius: "50%",
-                              marginRight: "10px",
-                            }}
-                          />
-                          <p style={{ color: "black" }}>
-                            {user1.firstName} {user1.lastName}
-                          </p>
-                        </div>
-                      </Link>
-                    ) : (
-                      ""
-                    )
-                  )}
-                </div>
-              </div>
-            ) : (
-              ""
-            )}
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            p={1} // add some padding
+                            borderRadius="5px"
+                            _hover={{
+                              backgroundColor: "rgba(255, 255, 255, 0.2)",
+                              cursor: "pointer",
+                            }} // add hover effect
+                          >
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                              <Avatar
+                                alt="userImage"
+                                src={`${user1.picturePath}`}
+                                sx={{ marginRight: 1 }}
+                              />
+                              <Typography
+                                variant="subtitle2"
+                                sx={{ color: "black" }}
+                              >
+                                {user1.firstName} {user1.lastName}
+                              </Typography>
+                            </Box>
+                            {/* <ArrowRightAltIcon fontSize="small" /> */}
+                          </Box>
+                        </Link>
+                      ) : null
+                    )}
+                  </Box>
+                ) : (
+                  <Typography>User not found.</Typography>
+                )}
+              </Box>
+            ) : null}
           </FlexBetween>
         )}
       </FlexBetween>
