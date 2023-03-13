@@ -3,7 +3,7 @@ import {
   PersonRemoveOutlined,
   Delete,
 } from "@mui/icons-material";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Typography, useTheme, Button } from "@mui/material";
 import { ConfirmToast } from "react-confirm-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -11,9 +11,15 @@ import { setFriends, setPosts } from "state/authSlice";
 import { deleteDataAPI, patchDataAPI } from "utils/fetchData";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
-import axios from "axios";
 
-const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
+const Friend = ({
+  friendId,
+  name,
+  subtitle,
+  userPicturePath,
+  postId,
+  isFriendData,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { _id } = useSelector((state) => state.user);
@@ -53,7 +59,6 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
         <Box
           onClick={() => {
             navigate(`/profile/${friendId}`);
-            navigate(0);
           }}
         >
           <Typography
@@ -74,32 +79,37 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId }) => {
           </Typography>
         </Box>
       </FlexBetween>
-      {friendId === _id ? (
+      {!isFriendData && friendId === _id ? (
         <ConfirmToast
-          asModal={false}
+          asModal={true}
           customCancel={"Cancel"}
           customConfirm={"Confirm"}
           customFunction={deletePost}
           message={"Do you want to delete post?"}
           position={"bottom-left"}
           showCloseIcon={true}
-          theme={"light"}
+          theme={"snow"}
         >
-          <IconButton sx={{ backgroundColor: primaryLight, p: "0.6rem" }}>
-            <Delete />
-          </IconButton>
+          {/* <IconButton sx={{ backgroundColor: primaryLight, p: "0.6rem" }}> */}
+            {/* <Delete /> */}
+            <Button>Delete</Button>
+          {/* </IconButton> */}
         </ConfirmToast>
       ) : (
-        <IconButton
-          onClick={() => patchFriend()}
-          sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-        >
-          {isFriend ? (
-            <PersonRemoveOutlined sx={{ color: primaryDark }} />
-          ) : (
-            <PersonAddOutlined sx={{ color: primaryDark }} />
-          )}
-        </IconButton>
+        <Box onClick={() => patchFriend()}>
+          {isFriend ? <Button>Unfollow</Button> : <Button>Follow</Button>}
+        </Box>
+
+        // <IconButton
+        //   onClick={() => patchFriend()}
+        //   sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+        // >
+        //   {isFriend ? (
+        //     <PersonRemoveOutlined sx={{ color: primaryDark }} />
+        //   ) : (
+        //     <PersonAddOutlined sx={{ color: primaryDark }} />
+        //   )}
+        // </IconButton>
       )}
     </FlexBetween>
   );

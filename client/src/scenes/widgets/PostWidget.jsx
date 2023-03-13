@@ -46,7 +46,6 @@ const PostWidget = ({
   const [isLiked, setIsLiked] = useState(
     Boolean(likes[loggedInUserId])
   );
-  console.log(isLiked,'k');
   const likeCount = Object.keys(likes).length;
   const { palette } = useTheme();
   const main = palette.neutral.main;

@@ -11,6 +11,7 @@ import useOnline from "utils/useOnline";
 import PasswordReset from "scenes/PasswordReset/PasswordReset";
 import ForgotPassword from "scenes/ForgotPassword/ForgotPassword";
 import Testing from "scenes/Testing/Testing";
+import MessagePage from "scenes/MessagePage/MessagePage";
 
 
 function App() {
@@ -54,6 +55,10 @@ function App() {
             <Route
               path="/profile/:userId"
               element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/message"
+              element={<MessagePage />}
             />
           </Routes>
         </ThemeProvider>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   IconButton,
@@ -20,18 +20,23 @@ import {
   Menu,
   Close,
 } from "@mui/icons-material";
+import { IoCloseCircleOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout, setIsMessage } from "state/authSlice";
-import { useNavigate } from "react-router-dom";
+import { setMode, setLogout } from "state/authSlice";
+import { Link, useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
+import { getDataAPI } from "utils/fetchData";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-  const isMessage = useSelector((state) => state.isMessage);
 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
@@ -45,10 +50,16 @@ const Navbar = () => {
   }`;
 
   const handleMessage = () => {
-    isMessage
-      ? dispatch(setIsMessage({ isMessage: false }))
-      : dispatch(setIsMessage({ isMessage: true }));
+    navigate("/message");
   };
+
+  const getAllUsers = async () => {
+    const { data } = await getDataAPI("/users", token);
+    setUsers(data);
+  };
+  useEffect(() => {
+    getAllUsers();
+  }, []);
   return (
     <FlexBetween
       padding="1rem 6%"
@@ -77,10 +88,74 @@ const Navbar = () => {
             gap="3rem"
             padding="0.1rem 1.5rem"
           >
-            <InputBase placeholder="Search..." />
+            <InputBase
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              type="text"
+            />
             <IconButton>
               <Search />
             </IconButton>
+            {search !== "" || open === true ? (
+              <div
+                className="search-result"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  position: "absolute",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <span
+                  onClick={() => [setOpen(false), setSearch("")]}
+                  style={{ color: "white", height: "5px", marginLeft: "468px" }}
+                >
+                  <IoCloseCircleOutline size={20} />
+                </span>
+                <div className="users-container">
+                  {users?.map((user1) =>
+                    user1.firstName.toLowerCase().includes(search) |
+                      user1.lastName.toLowerCase().includes(search) &&
+                    user._id !== user1.id ? (
+                      <Link
+                        style={{ textDecoration: "none" }}
+                        to={`/profile/${user1._id}`}
+                      >
+                        <div
+                          className="user-container"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <img
+                            className="search-image"
+                            src={`${user1.picturePath}`}
+                            alt="userImage"
+                            style={{
+                              height: "50px",
+                              width: "50px",
+                              borderRadius: "50%",
+                              marginRight: "10px",
+                            }}
+                          />
+                          <p style={{ color: "black" }}>
+                            {user1.firstName} {user1.lastName}
+                          </p>
+                        </div>
+                      </Link>
+                    ) : (
+                      ""
+                    )
+                  )}
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
           </FlexBetween>
         )}
       </FlexBetween>
@@ -96,7 +171,10 @@ const Navbar = () => {
             )}
           </IconButton>
           {/* <IconButton onClick={handleMessage}> */}
-            <Message onClick={handleMessage} sx={{ fontSize: "25px",cursor:"pointer" }} />
+          <Message
+            onClick={handleMessage}
+            sx={{ fontSize: "25px", cursor: "pointer" }}
+          />
           {/* </IconButton> */}
           <Notifications sx={{ fontSize: "25px" }} />
           <Help sx={{ fontSize: "25px" }} />
@@ -178,10 +256,7 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
-            <Message
-              sx={{ fontSize: "25px" }}
-              onClick={handleMessage}
-            />
+            <Message sx={{ fontSize: "25px" }} onClick={handleMessage} />
             <Notifications sx={{ fontSize: "25px" }} />
             <Help sx={{ fontSize: "25px" }} />
             <FormControl variant="standard" value={fullName}>

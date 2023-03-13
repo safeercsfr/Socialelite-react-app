@@ -1,29 +1,29 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFriends } from "state/authSlice";
 import { getDataAPI } from "utils/fetchData";
 
-const FriendListWidget = ({ userId }) => {
+const FriendListWidget = ({ userId,isFriendData=false }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
 
-  const getFriends = async () => {
-    try {
-      const {data} = await getDataAPI(`/users/${userId}/friends`,token)
-      dispatch(setFriends({ friends: data }));
-    } catch (error) {
-      console.error(error)
-    }
-  };
+  // const getFriends = async () => {
+  //   try {
+  //     const {data} = await getDataAPI(`/users/${userId}/friends`,token)
+  //     dispatch(setFriends({ friends: data }));
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // };
 
-  useEffect(() => {
-    getFriends();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // useEffect(() => {
+  //    getFriends();
+  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <WidgetWrapper style={{ position: "sticky", top: "7.3rem" }}>
@@ -43,6 +43,7 @@ const FriendListWidget = ({ userId }) => {
             name={`${friend.firstName} ${friend.lastName}`}
             subtitle={friend.occupation}
             userPicturePath={friend.picturePath}
+            isFriendData
           />
         ))}
       </Box>

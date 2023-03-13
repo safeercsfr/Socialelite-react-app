@@ -12,7 +12,7 @@ router.get("/:userId/posts", verifyToken, getUserPosts);
 router.patch("/:id/like", verifyToken, likePost);
 router.post("/:id/comment", verifyToken, postComment);
 
-/* UPDATE */
+/* DELETE */
 router.delete('/:postId', verifyToken, deletePost)
 
 export default router;

@@ -4,19 +4,27 @@ import {
   LocationOnOutlined,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
-import { Box, Typography, Divider, useTheme } from "@mui/material";
+import { Box, Typography, Divider, useTheme, Button } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDataAPI } from "utils/fetchData";
-import { setIsEditing, setUserData } from "state/authSlice";
+import { setFriends, setIsEditing, setUserData } from "state/authSlice";
 
-const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
+const UserWidget = ({
+  userId,
+  picturePath,
+  isEditUser,
+  isFriendData,
+  isProfile = false,
+}) => {
   const { palette } = useTheme();
   const navigate = useNavigate();
+  const [friendData, setFriendData] = useState({});
+  const [followers, setFollowers] = useState({});
   const token = useSelector((state) => state.token);
   const user = useSelector((state) => state.user);
   const dark = palette.neutral.dark;
@@ -27,7 +35,18 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
   const getUser = async () => {
     try {
       const { data } = await getDataAPI(`/users/${userId}`, token);
-      dispatch(setUserData({user:data}))
+      setFriendData(data);
+      // dispatch(setUserData({user:data}))
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getFollowers = async () => {
+    try {
+      const { data } = await getDataAPI(`/users/${userId}/followers`, token);
+      setFollowers(data);
+      // setFriendData(data);
     } catch (error) {
       console.error(error);
     }
@@ -35,10 +54,11 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
 
   useEffect(() => {
     getUser();
+    getFollowers();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   let handleEditClick = () => {
-      dispatch(setIsEditing({ isEditing: true }));
+    dispatch(setIsEditing({ isEditing: true }));
   };
 
   if (!user) {
@@ -49,9 +69,9 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
     lastName,
     location,
     occupation,
-    viewProfile,
-    impressions,
-    friends,
+    // viewProfile,
+    // impressions,
+    // friends,
   } = user;
 
   return (
@@ -65,7 +85,10 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
         onClick={() => navigate(`/profile/${userId}`)}
       >
         <FlexBetween gap="0.5rem">
-          <UserImage image={picturePath} isProfile={isProfile} />
+          <UserImage
+            image={isFriendData ? friendData?.user?.picturePath : picturePath}
+            isProfile={!isFriendData && isProfile}
+          />
           <Box mb="1rem">
             <Typography
               variant="h4"
@@ -78,9 +101,14 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
                 },
               }}
             >
-              {firstName} {lastName}
+              {isFriendData ? friendData?.user?.firstName : firstName}{" "}
+              {isFriendData ? friendData?.user?.lastName : lastName}
             </Typography>
-            <Typography color={medium}>{friends.length} friends</Typography>
+            {/* {isProfile && isFriendData ?<Button>Unfollow</Button> : <Button>Follow</Button>} */}
+            {/* <Typography color={medium}>
+              {isFriendData ? friendData?.user?.friends?.length : friends?.length}{" "}
+              friends
+            </Typography> */}
           </Box>
         </FlexBetween>
         {isEditUser && (
@@ -95,31 +123,52 @@ const UserWidget = ({ userId, picturePath, isEditUser, isProfile = false }) => {
       <Box p="1rem 0">
         <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
           <LocationOnOutlined fontSize="large" sx={{ color: main }} />
-          <Typography color={medium}>{location}</Typography>
+          <Typography color={medium}>
+            {isFriendData ? friendData?.user?.location : location}
+          </Typography>
         </Box>
         <Box display="flex" alignItems="center" gap="1rem">
           <WorkOutlineOutlined fontSize="large" sx={{ color: main }} />
-          <Typography color={medium}>{occupation}</Typography>
+          <Typography color={medium}>
+            {isFriendData ? friendData?.user?.occupation : occupation}
+          </Typography>
         </Box>
       </Box>
-
       <Divider />
 
       {/* THIRD ROW */}
       <Box p="1rem 0">
         <FlexBetween mb="0.5rem">
+          <Typography color={medium}>Following</Typography>
+          <Typography color={main} fontWeight="500">
+            {isFriendData
+              ? friendData.followingCount
+              : followers.followingCount}
+          </Typography>
+        </FlexBetween>
+        <FlexBetween>
+          <Typography color={medium}>Followers</Typography>
+          <Typography color={main} fontWeight="500">
+            {isFriendData
+              ? friendData.followersCount
+              : followers.followersCount}
+          </Typography>
+        </FlexBetween>
+      </Box>
+      {/* <Box p="1rem 0">
+        <FlexBetween mb="0.5rem">
           <Typography color={medium}>Who's viewed your profile</Typography>
           <Typography color={main} fontWeight="500">
-            {viewProfile}
+            {isFriendData ? friendData?.viewProfile : viewProfile}
           </Typography>
         </FlexBetween>
         <FlexBetween>
           <Typography color={medium}>Impressions of your post</Typography>
           <Typography color={main} fontWeight="500">
-            {impressions}
+            {isFriendData ? friendData?.impressions : impressions}
           </Typography>
         </FlexBetween>
-      </Box>
+      </Box> */}
 
       <Divider />
 

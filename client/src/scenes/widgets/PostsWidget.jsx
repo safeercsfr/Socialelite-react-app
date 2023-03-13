@@ -17,6 +17,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       console.error(error);
     }
   };
+  
   const getUserPosts = async () => {
     try {
       const { data } = await getDataAPI(`/posts/${userId}/posts`, token);

@@ -1,5 +1,6 @@
 import Post from "../models/Post.js";
 import cloudinary from "../config/cloudinary.js";
+import User from "../models/User.js";
 
 /* CREATE */
 export const createPost = async (req, res) => {
@@ -40,17 +41,34 @@ export const createPost = async (req, res) => {
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {
-    const post = await Post.find({ isDelete: false })
-      .populate("author", "firstName lastName picturePath")
-      .populate("comments.author", "firstName lastName picturePath")
-      .sort({ createdAt: -1 })
-      .exec();
+    const { id } = req.user;
+    const user = await User.findById(id);
+
+    const post = await Post.find({ isDelete: false, author: { $in: [...user.friends.map(friend => friend.following), user._id] } })
+    .populate("author", "firstName lastName picturePath")
+    .populate("comments.author", "firstName lastName picturePath")
+    .sort({ createdAt: -1 })
+    .exec();
 
     res.status(200).json(post);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
 };
+
+// export const getFeedPosts = async (req, res) => {
+//   try {
+//     const post = await Post.find({ isDelete: false })
+//       .populate("author", "firstName lastName picturePath")
+//       .populate("comments.author", "firstName lastName picturePath")
+//       .sort({ createdAt: -1 })
+//       .exec();
+
+//     res.status(200).json(post);
+//   } catch (err) {
+//     res.status(404).json({ message: err.message });
+//   }
+// };
 
 export const getUserPosts = async (req, res) => {
   try {
