@@ -1,42 +1,45 @@
 import { useTheme } from "@emotion/react";
-import { EditOutlined } from "@mui/icons-material";
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import WidgetWrapper from "components/WidgetWrapper";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { setLogin, setUserData } from "state/authSlice";
 import { postDataAPI } from "utils/fetchData";
 
-export const PasswordReset = () => {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+const VerifyEmail = () => {
   const theme = useTheme();
+  const { palette } = useTheme();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [OTP, setOTP] = useState("");
+  const { id } = useParams();
 
-  const handleChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const sendLink = async (e) => {
-    e.preventDefault();
-
-    if (email === "") {
-      toast.error("email is required", {
-        position: "bottom-center",
-      });
-    } else if (!email.includes("@")) {
-      toast.warning("includes @ in your email!", {
-        position: "bottom-center",
-      });
-    } else {
-      const { data } = await postDataAPI(`/auth/sendpasswordlink`, { email });
-      console.log(data);
-
-      if (data.status === 201) {
-        setEmail("");
-        setMessage(true);
-      } else {
-        toast.error("invalid user!");
+  const handleOTP = async (e) => {
+    try {
+      e.preventDefault();
+      const { data } = await postDataAPI(`/auth/verify-email/${id}`, { OTP });
+      if (data) {
+        dispatch(
+          setLogin({
+            token: data.token,
+          })
+        );
+        dispatch(
+          setUserData({
+            user: data.user,
+          })
+        );
+        navigate("/home");
       }
+    } catch (err) {
+      (({ response }) => {
+        toast.error(response.data.message, {
+          position: "bottom-center",
+        });
+      })(err);
     }
   };
 
@@ -63,13 +66,6 @@ export const PasswordReset = () => {
         >
           <WidgetWrapper>
             <Box p="1rem" sx={{ width: "30rem", alignItems: "center" }}>
-              {message ? (
-                <p style={{ color: "green", fontWeight: "bold" }}>
-                  Passowrd reset link send successfully in your Email
-                </p>
-              ) : (
-                ""
-              )}
               <Typography
                 variant="h4"
                 //   color={}
@@ -77,18 +73,18 @@ export const PasswordReset = () => {
                 mb="1rem"
                 sx={{ display: "flex", alignItems: "center" }}
               >
-                <EditOutlined sx={{ mr: "0.5rem" }} />
-                Reset Password
+                Enter OTP
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
-                    name="email"
-                    label="Email"
-                    value={email}
-                    onChange={handleChange}
+                    name="otp"
+                    label="OTP"
+                    // value={email}
+                    onChange={(e) => setOTP(e.target.value)}
                     margin="normal"
                     variant="outlined"
+                    type="number"
                     fullWidth
                   />
                 </Grid>
@@ -97,12 +93,27 @@ export const PasswordReset = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={sendLink}
+                  onClick={handleOTP}
                   type="submit"
                 >
                   Submit
                 </Button>
               </Box>
+              <Link to="/">
+                <Typography
+                  sx={{
+                    textAlign: "left",
+                    textDecoration: "underline",
+                    color: palette.primary.main,
+                    "&:hover": {
+                      cursor: "pointer",
+                      color: palette.primary.light,
+                    },
+                  }}
+                >
+                  Back to the page
+                </Typography>
+              </Link>
             </Box>
           </WidgetWrapper>
         </Box>
@@ -112,4 +123,4 @@ export const PasswordReset = () => {
   );
 };
 
-export default PasswordReset;
+export default VerifyEmail;

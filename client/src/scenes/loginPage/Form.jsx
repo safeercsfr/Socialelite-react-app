@@ -94,7 +94,11 @@ const Form = () => {
       const savedUser = data;
       onSubmitProps.resetForm();
       setLoading(false);
-      if (savedUser) setPageType("login");
+      console.log(savedUser,'savedUser------------');
+      if(savedUser?.status ==="Pending"){
+        navigate(`/verify-email/${savedUser.user}`);
+      }
+      // if (savedUser) setPageType("login");
     } catch (err) {
       setLoading(false);
       if (err.response && err.response.data.error) {
@@ -304,7 +308,7 @@ const Form = () => {
                 : "Already have an account? Login here."}
             </Typography>
             {isLogin && (
-              <Link to="/password-reset">
+              <Link to="/forgot-password">
                 <Typography
                   sx={{
                     textAlign: "right",

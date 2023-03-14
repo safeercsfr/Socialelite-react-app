@@ -9,69 +9,41 @@ import { getDataAPI, postDataAPI } from "utils/fetchData";
 export const ForgotPassword = () => {
   const { id, token } = useParams();
   const history = useNavigate();
-  const [data, setData] = useState(false);
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const theme = useTheme();
+  const [isVerified, setIsVerified] = useState(false);
+  const [url, setUrl] = useState("");
+  const [email, setEmail] = useState("");
 
-  const userValid = async () => {
+  const handleClick = async (e) => {
     try {
-      const { data } = await getDataAPI(`/auth/forgotpassword/${id}/${token}`);
-      if (data.status === 201) {
-        console.log("user valid");
-      } else {
-        history("*");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const setval = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const sendpassword = async (e) => {
-    e.preventDefault();
-    if (password === "") {
-      toast.error("password is required", {
-        position: "top-center",
-      });
-    } else if (password.length < 6) {
-      toast.error("Password must have minimum 6 charactors");
-    } else if (
-      !password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]+$/)
-    ) {
-      toast.error(
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-      );
-    } else {
-      try {
-        const { data } = await postDataAPI(`/auth/${id}/${token}`, {
-          password,
+      e.preventDefault();
+      if (email === "") {
+        toast.error("email is required", {
+          position: "bottom-center",
         });
-        if (data.status === 201) {
-          setPassword("");
-          setMessage(true);
-        } else {
-          toast.error("! Token expired generate new link", {
-            position: "top-center",
-          });
+      } else if (!email.includes("@")) {
+        toast.warning("includes @ in your email!", {
+          position: "bottom-center",
+        });
+      } else {
+        const { data } = await postDataAPI(`/auth/forgot-password`, {
+          email,
+        });
+        if(data){
+          setIsVerified(true);
+          setEmail("");
         }
-      } catch (error) {
-        console.error(error);
       }
+    } catch (err) {
+       (({ response }) => {
+        toast.error(response.data.message, {
+          position: "bottom-center",
+        });
+      })(err);
     }
   };
 
-  useEffect(() => {
-    userValid();
-    setTimeout(() => {
-      setData(true);
-    }, 3000);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return (
+  return !isVerified ? (
     <form>
       <Box>
         <Box
@@ -94,13 +66,6 @@ export const ForgotPassword = () => {
         >
           <WidgetWrapper>
             <Box p="1rem" sx={{ width: "30rem", alignItems: "center" }}>
-              {message ? (
-                <p style={{ color: "green", fontWeight: "bold" }}>
-                  Passowrd updated successfully
-                </p>
-              ) : (
-                ""
-              )}
               <Typography
                 variant="h4"
                 //   color={}
@@ -109,16 +74,15 @@ export const ForgotPassword = () => {
                 sx={{ display: "flex", alignItems: "center" }}
               >
                 {/* <EditOutlined sx={{ mr: "0.5rem" }} /> */}
-                Enter Your New Password
+                Enter Your Email
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
-                    name="password"
-                    label="Enter new password"
-                    type="password"
-                    value={password}
-                    onChange={setval}
+                    name="email"
+                    label="Enter new email"
+                    type="email"
+                    onChange={(e) => setEmail(e.target.value)}
                     margin="normal"
                     variant="outlined"
                     fullWidth
@@ -139,14 +103,14 @@ export const ForgotPassword = () => {
                 }}
               >
                 <Button
-                  onClick={sendpassword}
+                  onClick={handleClick}
                   type="submit"
                   variant="contained"
                   color="primary"
                 >
                   Send
                 </Button>
-                <Link to="/" style={{ textDecoration: 'none' }}>
+                <Link to="/" style={{ textDecoration: "none" }}>
                   <Button
                     sx={{ marginTop: "10px" }}
                     type="submit"
@@ -163,6 +127,18 @@ export const ForgotPassword = () => {
       </Box>
       <Toaster />
     </form>
+  ) : (
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <h2>URL has sended to your email,Check email and Go to the URL</h2>
+    </div>
   );
 };
 

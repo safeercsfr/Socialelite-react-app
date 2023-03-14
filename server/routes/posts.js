@@ -1,5 +1,11 @@
 import express from "express";
-import { deletePost, getFeedPosts, getUserPosts, likePost, postComment } from "../controllers/posts.js";
+import {
+  deletePost,
+  getFeedPosts,
+  getUserPosts,
+  likePost,
+  postComment,
+} from "../controllers/posts.js";
 import { verifyToken } from "../middlleware/auth.js";
 
 const router = express.Router();
@@ -13,6 +19,6 @@ router.patch("/:id/like", verifyToken, likePost);
 router.post("/:id/comment", verifyToken, postComment);
 
 /* DELETE */
-router.delete('/:postId', verifyToken, deletePost)
+router.delete("/:postId", verifyToken, deletePost);
 
 export default router;

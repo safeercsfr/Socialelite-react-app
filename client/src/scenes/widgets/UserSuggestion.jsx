@@ -1,15 +1,30 @@
-import { Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Typography, useTheme } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
-// import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
-
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { getDataAPI } from "utils/fetchData";
 
 const UserSuggestion = () => {
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
-  // const main = palette.neutral.main;
-  const medium = palette.neutral.medium;
-  // const imagePath = `${process.env.REACT_APP_BASE_URL}/assets/ads2.jpg`
+  const [users, setUsers] = useState([]);
+  const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
+
+  const getAllUsers = async () => {
+    try {
+      const { data } = await getDataAPI(`/users/${user._id}/suggestions`, token);
+      setUsers(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllUsers();
+  }, []);
 
   return (
     <WidgetWrapper style={{ position: "sticky", top: "7.3rem" }}>
@@ -17,23 +32,39 @@ const UserSuggestion = () => {
         <Typography color={dark} variant="h5" fontWeight="500">
           Suggestions
         </Typography>
-        {/* <Typography color={medium}>Create Ad</Typography> */}
       </FlexBetween>
-      {/* <img
-        width="100%"
-        height="auto"
-        alt="advert"
-        src={imagePath}
-        style={{ borderRadius: "0.75rem", margin: "0.75rem 0" }}
-      /> */}
-      {/* <FlexBetween>
-        <Typography color={main}>MikaCosmetics</Typography>
-        <Typography color={medium}>mikacosmetics.com</Typography>
-      </FlexBetween> */}
-      <Typography color={medium} m="0.5rem 0">
-        Your pathway to stunning and immaculate beauty and made sure your skin
-        is exfoliating skin and shining like light.
-      </Typography>
+      <Box>
+          {users.map((user1) =>
+              <Link
+                key={user1._id} // add a unique key for each item
+                style={{ textDecoration: "none" }}
+                to={`/profile/${user1._id}`}
+              >
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  p={1} // add some padding
+                  borderRadius="5px"
+                  _hover={{
+                    backgroundColor: "rgba(255, 255, 255, 0.2)",
+                    cursor: "pointer",
+                  }} // add hover effect
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Avatar
+                      alt="userImage"
+                      src={`${user1.picturePath}`}
+                      sx={{ marginRight: 1 }}
+                    />
+                    <Typography variant="subtitle2" sx={{ color: "black" }}>
+                      {user1.firstName} {user1.lastName}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Link>
+          )}
+        </Box>
     </WidgetWrapper>
   );
 };

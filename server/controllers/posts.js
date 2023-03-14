@@ -44,11 +44,16 @@ export const getFeedPosts = async (req, res) => {
     const { id } = req.user;
     const user = await User.findById(id);
 
-    const post = await Post.find({ isDelete: false, author: { $in: [...user.friends.map(friend => friend.following), user._id] } })
-    .populate("author", "firstName lastName picturePath")
-    .populate("comments.author", "firstName lastName picturePath")
-    .sort({ createdAt: -1 })
-    .exec();
+    const post = await Post.find({
+      isDelete: false,
+      author: {
+        $in: [...user.friends.map((friend) => friend.following), user._id],
+      },
+    })
+      .populate("author", "firstName lastName picturePath")
+      .populate("comments.author", "firstName lastName picturePath")
+      .sort({ createdAt: -1 })
+      .exec();
 
     res.status(200).json(post);
   } catch (err) {

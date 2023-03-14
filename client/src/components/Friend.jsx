@@ -32,7 +32,7 @@ const Friend = ({
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
 
-  const isFriend = friends.find((friend) => friend._id === friendId);
+  const isFriend = friends.find((friend) => friend?._id === friendId);
 
   const patchFriend = async () => {
     try {
@@ -99,17 +99,6 @@ const Friend = ({
         <Box onClick={() => patchFriend()}>
           {isFriend ? <Button>Unfollow</Button> : <Button>Follow</Button>}
         </Box>
-
-        // <IconButton
-        //   onClick={() => patchFriend()}
-        //   sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-        // >
-        //   {isFriend ? (
-        //     <PersonRemoveOutlined sx={{ color: primaryDark }} />
-        //   ) : (
-        //     <PersonAddOutlined sx={{ color: primaryDark }} />
-        //   )}
-        // </IconButton>
       )}
     </FlexBetween>
   );

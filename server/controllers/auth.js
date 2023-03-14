@@ -3,21 +3,13 @@ import jwt from "jsonwebtoken";
 import { body, validationResult } from "express-validator";
 import User from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
-// import sendEmail from "../utils/sendEmail.js";
-// import Token from "../models/token.js";
-// import crypto from "crypto";
+import crypto from "crypto";
+import { generateOTP } from "../utils/mail.js";
+import VerificationTokenModel from "../models/VerificationToken.js";
+import resetTokenModel from "../models/ResetToken.js";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
-
-// import UserOtpVerification from "../models/UserOtpVerification.js";
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.NODEMAILER_USER,
-    pass: process.env.NODEMAILER_PASS,
-  },
-});
 
 // REGISTER USER
 export const register = async (req, res) => {
@@ -86,11 +78,99 @@ export const register = async (req, res) => {
       viewProfile: Math.ceil(Math.random() * 1000),
       impressions: Math.floor(Math.random() * 1000),
     });
+
+    // Save user to database
     const savedUser = await newUser.save();
-    res.status(201).json(savedUser);
+
+    // Generate JWT token
+    const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET);
+
+    const OTP = generateOTP();
+    const verificationToken = await VerificationTokenModel.create({
+      seller: savedUser._id,
+      token: OTP,
+    });
+    await verificationToken.save();
+    //set up nodemailer
+    const transport = nodemailer.createTransport({
+      host: "smtp.mailtrap.io",
+      port: 2525,
+      auth: {
+        user: process.env.NODEMAIL_USER,
+        pass: process.env.NODEMAIL_PASS,
+      },
+    });
+    transport.sendMail({
+      from: "socialmedia@gmail.com",
+      to: savedUser.email,
+      subject: "Verify your email using OTP",
+      html: `<h1>Your OTP CODE ${OTP}</h1>`,
+    });
+
+    // Return success message with token and user data
+    // res.status(201).json({ token, user: savedUser });
+    return res.status(200).json({
+      status: "Pending",
+      message: "Please check your email",
+      user: savedUser._id,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+// MAIL VERIFY
+export const verifyEmail = async (req, res) => {
+  try {
+    const { OTP } = req.body;
+    const { id } = req.params;
+
+    const mainUser = await User.findById(id);
+    if (!mainUser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    if (mainUser.verified === true) {
+      return res.status(400).json({ message: "User already verified" });
+    }
+    const tokenAvail = await VerificationTokenModel.findOne({
+      seller: mainUser._id,
+    });
+    if (!tokenAvail) {
+      return res.status(400).json({ message: "Sorry token not found" });
+    }
+    const isMatch = await bcrypt.compare(OTP, tokenAvail.token);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Token is not valid" });
+    }
+    mainUser.verified = true;
+    await VerificationTokenModel.findByIdAndDelete(tokenAvail._id);
+    await mainUser.save();
+    const token = jwt.sign(
+      {
+        id: mainUser._id,
+      },
+      process.env.JWT_SECRET
+    );
+    const { password, ...other } = mainUser._doc;
+    const transport = nodemailer.createTransport({
+      host: "smtp.mailtrap.io",
+      port: 2525,
+      auth: {
+        user: process.env.NODEMAIL_USER,
+        pass: process.env.NODEMAIL_PASS,
+      },
+    });
+    transport.sendMail({
+      from: "socialmedia@gmail.com",
+      to: mainUser.email,
+      subject: "Successfully verified your email",
+      html: `Now you can login in social app`,
+    });
+    return res.status(200).json({ token, user: other });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -133,96 +213,111 @@ export const updateProPic = async (req, res) => {
   }
 };
 
-/*EMAIL VERIFICATION*/
-
-export const sendPasswordLink = async (req, res) => {
-
-  const {email} = req.body
-
-  if (!email) {
-    res.status(401).json({ status: 401, message: "Enter Your Email" });
-  }
-
-  try {
-    const userfind = await User.findOne({ email: email });
-    
-    const token = jwt.sign({ _id: userfind._id }, process.env.JWT_SECRET, {
-      expiresIn: "120s",
-    });
-    
-    const setusertoken = await User.findByIdAndUpdate(
-      { _id: userfind._id },
-      { verifytoken: token },
-      { new: true }
-    );
-  
-    if (setusertoken) {
-      const mailOptions = {
-        from: process.env.NODEMAILER_USER,
-        to: email,
-        subject: "Sending Email For password Reset",
-        text: `This link valid for 2 minutes http://localhost:3000/forgotpassword/${userfind.id}/${setusertoken.verifytoken}`,
-      }
-  
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log("error hlooo", error);
-          res.status(401).json({ status: 401, message: "email not send" });
-        } else {
-          console.log("Email sent", info.response);
-          res
-            .status(201)
-            .json({ status: 201, message: "Email sent Successfully" });
-        }
-      });
-    }
-  } catch (error) {
-    res.status(401).json({ status: 401, message: "invalid user" });
-  }
-};
-
+// FORGOT PASSWORD
 export const forgotpassword = async (req, res) => {
-  const { id, token } = req.params;
   try {
-    const validuser = await User.findOne({ _id: id, verifytoken: token });
+    const { email } = req.body;
+    console.log(email);
+    const user = await User.findOne({ email });
+    console.log(user, "ppp");
 
-    const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log(verifyToken);
-
-    if (validuser && verifyToken._id) {
-      res.status(201).json({ status: 201, validuser });
-    } else {
-      res.status(401).json({ status: 401, message: "user not exist" });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
     }
+    const token = await resetTokenModel.findOne({ seller: user._id });
+    console.log(token, "ppp");
+
+    if (token) {
+      return res.status(400).json({ message: "After one hour you can try!" });
+    }
+    const RandomTxt = crypto.randomBytes(20).toString("hex");
+    const resetToken = new resetTokenModel({
+      seller: user._id,
+      token: RandomTxt,
+    });
+    await resetToken.save();
+    const transport = nodemailer.createTransport({
+      host: "smtp.mailtrap.io",
+      port: 2525,
+      auth: {
+        user: process.env.NODEMAIL_USER,
+        pass: process.env.NODEMAIL_PASS,
+      },
+    });
+    transport.sendMail({
+      from: "socialmedia@gmail.com",
+      to: user.email,
+      subject: "Reset Token",
+      html: `http://localhost:3000/reset-password/?token=${RandomTxt}&_id=${user._id}`,
+    });
+    return res
+      .status(200)
+      .json({ message: "Check your email to reset password" });
   } catch (error) {
-    res.status(401).json({ status: 401, error });
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export const changepassword = async (req, res) => {
-  const { id, token } = req.params;
-
-  const { password } = req.body;
-
+// RESET PASSWORD
+export const resetPassword = async (req, res) => {
   try {
-    const validuser = await User.findOne({ _id: id, verifytoken: token });
-
-    const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (validuser && verifyToken._id) {
-      const newpassword = await bcrypt.hash(password, 12);
-
-      const setnewuserpass = await User.findByIdAndUpdate(
-        { _id: id },
-        { password: newpassword }
-      );
-
-      setnewuserpass.save();
-      res.status(201).json({ status: 201, setnewuserpass });
-    } else {
-      res.status(401).json({ status: 401, message: "user not exist" });
+    const { token, _id } = req.query;
+    if (!token || !_id) {
+      return res.status(400).json({ message: "Invalid request" });
     }
+    const user = await User.findOne({ _id });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    const resetToken = await resetTokenModel.findOne({ seller: user._id });
+    if (!resetToken) {
+      return res.status(400).json({ message: "Reset token is not found" });
+    }
+    const matchToken = await bcrypt.compare(token, resetToken.token);
+    if (!matchToken) {
+      return res.status(400).json({ message: "Token is not valid" });
+    }
+
+    await Promise.all([
+      body("password")
+        .isLength({
+          min: 8,
+        })
+        .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
+        .withMessage(
+          "Password should contain at least 8 characters, one uppercase letter and one number"
+        )
+        .run(req),
+    ]);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errorMessages = errors.array().map((error) => error.msg);
+      return res.status(400).json({ error: errorMessages });
+    }
+
+    const { password } = req.body;
+    const hashPass = await bcrypt.hash(password, 10);
+    user.password = hashPass;
+    await user.save();
+    const transport = nodemailer.createTransport({
+      host: "smtp.mailtrap.io",
+      port: 2525,
+      auth: {
+        user: process.env.NODEMAIL_USER,
+        pass: process.env.NODEMAIL_PASS,
+      },
+    });
+    transport.sendMail({
+      from: "socialmedia@gmail.com",
+      to: user.email,
+      subject: "Your password reset successfully",
+      html: `Now you can login with new password`,
+    });
+    return res.status(200).json({ message: "Email has been send" });
   } catch (error) {
-    res.status(401).json({ status: 401, error });
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

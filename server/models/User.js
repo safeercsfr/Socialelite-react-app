@@ -37,12 +37,12 @@ const UserSchema = new mongoose.Schema(
     occupation: String,
     viewProfile: Number,
     impressions: Number,
-    verifytoken:{
-      type:String,
+    verifytoken: {
+      type: String,
     },
   },
   { timestamps: true }
 );
 
-const User = mongoose.model("User", UserSchema)
-export default User
+const User = mongoose.model("User", UserSchema);
+export default User;

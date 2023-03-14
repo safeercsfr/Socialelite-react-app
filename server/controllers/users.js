@@ -14,13 +14,11 @@ export const getUser = async (req, res) => {
       "friends.following": id,
     });
 
-    res
-      .status(200)
-      .json({
-        user,
-        followingCount: followingCount,
-        followersCount: followersCount,
-      });
+    res.status(200).json({
+      user,
+      followingCount: followingCount,
+      followersCount: followersCount,
+    });
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
@@ -46,8 +44,18 @@ export const getUserFollowers = async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
-    console.log('user');
     const user = await User.find({});
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+export const getSuggestionUsers = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const currentUser = await User.findById(id);
+    const following = currentUser.friends.map((friend) => friend.following);
+    const user = await User.find({ _id: { $nin: [following, id] } });
     res.status(200).json(user);
   } catch (err) {
     res.status(404).json({ message: err.message });
