@@ -12,6 +12,7 @@ const UserSuggestion = () => {
   const [users, setUsers] = useState([]);
   const user = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
+  const [apiCalled, setApiCalled] = useState(false);
 
   const getAllUsers = async () => {
     try {
@@ -23,8 +24,12 @@ const UserSuggestion = () => {
   };
 
   useEffect(() => {
-    getAllUsers();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!apiCalled) { 
+      getAllUsers();
+      setApiCalled(true); 
+    }
+  }, [apiCalled]); // eslint-disable-line
+
 
   return (
     <WidgetWrapper style={{ position: "sticky", top: "7.3rem" }}>

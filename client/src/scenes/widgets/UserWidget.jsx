@@ -4,7 +4,7 @@ import {
   LocationOnOutlined,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
-import { Box, Typography, Divider, useTheme, Button } from "@mui/material";
+import { Box, Typography, Divider, useTheme } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDataAPI } from "utils/fetchData";
-import { setFriends, setIsEditing, setUserData } from "state/authSlice";
+import { setIsEditing } from "state/authSlice";
 
 const UserWidget = ({
   userId,
@@ -32,30 +32,23 @@ const UserWidget = ({
   const main = palette.neutral.main;
   const dispatch = useDispatch();
 
-  const getUser = async () => {
-    try {
-      const { data } = await getDataAPI(`/users/${userId}`, token);
-      setFriendData(data);
-      // dispatch(setUserData({user:data}))
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getFollowers = async () => {
-    try {
-      const { data } = await getDataAPI(`/users/${userId}/followers`, token);
-      setFollowers(data);
-      // setFriendData(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
-    getUser();
-    getFollowers();
+    const fetchData = async () => {
+      try {
+        const { data } = await getDataAPI(`/users/${userId}`, token);
+        setFriendData(data);
+
+        const { data: followersData } = await getDataAPI(`/users/${userId}/followers`, token);
+        setFollowers(followersData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    fetchData();
+    
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  
 
   let handleEditClick = () => {
     dispatch(setIsEditing({ isEditing: true }));

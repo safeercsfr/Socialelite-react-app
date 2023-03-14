@@ -220,13 +220,11 @@ export const forgotpassword = async (req, res) => {
     const { email } = req.body;
     console.log(email);
     const user = await User.findOne({ email });
-    console.log(user, "ppp");
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
     const token = await resetTokenModel.findOne({ seller: user._id });
-    console.log(token, "ppp");
 
     if (token) {
       return res.status(400).json({ message: "After one hour you can try!" });
@@ -280,23 +278,20 @@ export const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Token is not valid" });
     }
 
-    await Promise.all([
-      body("password")
-        .isLength({
-          min: 8,
-        })
-        .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
-        .withMessage(
-          "Password should contain at least 8 characters, one uppercase letter and one number"
-        )
-        .run(req),
-    ]);
+    // await Promise.all([
+    //   body("password")
+    //     .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
+    //     .withMessage(
+    //       "Password should contain at least 8 characters, one uppercase letter and one number"
+    //     )
+    //     .run(req),
+    // ]);
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const errorMessages = errors.array().map((error) => error.msg);
-      return res.status(400).json({ error: errorMessages });
-    }
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   const errorMessages = errors.array().map((error) => error.msg);
+    //   return res.status(400).json({ error: errorMessages });
+    // }
 
     const { password } = req.body;
     const hashPass = await bcrypt.hash(password, 10);
@@ -322,8 +317,7 @@ export const resetPassword = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-const CLIENT_ID =
-  "954345091005-9rh0rau0hn2lv9tou1v2ai955gqpsnnd.apps.googleusercontent.com";
+const CLIENT_ID = process.env.CLIENT_ID;
 async function verify(client_id, jwtToken) {
   const client = new OAuth2Client(client_id);
   // Call the verifyIdToken to

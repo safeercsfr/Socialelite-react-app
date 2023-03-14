@@ -11,7 +11,6 @@ import {
   useMediaQuery,
   Avatar,
 } from "@mui/material";
-import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Search,
@@ -23,7 +22,6 @@ import {
   Menu,
   Close,
 } from "@mui/icons-material";
-import { IoCloseCircleOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state/authSlice";
 import { Link, useNavigate } from "react-router-dom";
@@ -40,7 +38,7 @@ const Navbar = () => {
   const user = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-
+  const isMobileScreen = useMediaQuery("(max-width: 999px)");
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -60,9 +58,11 @@ const Navbar = () => {
     const { data } = await getDataAPI("/users", token);
     setUsers(data);
   };
+
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, []); // eslint-disable-line
+
   return (
     <FlexBetween
       padding="1rem 6%"
@@ -84,7 +84,15 @@ const Navbar = () => {
         >
           Socialelite
         </Typography>
-        {isNonMobileScreens && (
+
+        {/* show search bar only for mobile screens */}
+        {isMobileScreen && (
+          <IconButton onClick={() => setOpen(!open)}>
+            <Search />
+          </IconButton>
+        )}
+
+        {(open || isNonMobileScreens) && (
           <FlexBetween
             backgroundColor={neutralLight}
             borderRadius="9px"
@@ -108,13 +116,13 @@ const Navbar = () => {
                 backgroundColor="white"
                 marginTop="15rem"
                 borderRadius="10px"
-                width="300px" // adjust based on your preference
-                boxShadow={4} // add shadow effect
-                p={1} // add some padding
+                width="300px"
+                boxShadow={4}
+                p={1}
               >
                 <IconButton
                   onClick={() => [setOpen(false), setSearch("")]}
-                  style={{ alignSelf: "flex-end" }} // align to the right side
+                  style={{ alignSelf: "flex-end" }}
                 >
                   <CloseIcon fontSize="small" />
                 </IconButton>
@@ -125,7 +133,7 @@ const Navbar = () => {
                         user1.lastName.toLowerCase().includes(search) &&
                       user._id !== user1.id ? (
                         <Link
-                          key={user1._id} // add a unique key for each item
+                          key={user1._id}
                           style={{ textDecoration: "none" }}
                           to={`/profile/${user1._id}`}
                         >
@@ -138,7 +146,7 @@ const Navbar = () => {
                             _hover={{
                               backgroundColor: "rgba(255, 255, 255, 0.2)",
                               cursor: "pointer",
-                            }} // add hover effect
+                            }}
                           >
                             <Box sx={{ display: "flex", alignItems: "center" }}>
                               <Avatar
@@ -153,7 +161,6 @@ const Navbar = () => {
                                 {user1.firstName} {user1.lastName}
                               </Typography>
                             </Box>
-                            {/* <ArrowRightAltIcon fontSize="small" /> */}
                           </Box>
                         </Link>
                       ) : null
@@ -178,12 +185,10 @@ const Navbar = () => {
               <DarkMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          {/* <IconButton onClick={handleMessage}> */}
           <Message
             onClick={handleMessage}
             sx={{ fontSize: "25px", cursor: "pointer" }}
           />
-          {/* </IconButton> */}
           <Notifications sx={{ fontSize: "25px" }} />
           <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard" value={fullName}>
