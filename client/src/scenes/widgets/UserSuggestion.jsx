@@ -24,7 +24,7 @@ const UserSuggestion = () => {
 
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <WidgetWrapper style={{ position: "sticky", top: "7.3rem" }}>

@@ -17,6 +17,8 @@ import FlexBetween from "components/FlexBetween";
 import { toast, Toaster } from "react-hot-toast";
 import { postDataAPI } from "utils/fetchData";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { GoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -94,7 +96,6 @@ const Form = () => {
       const savedUser = data;
       onSubmitProps.resetForm();
       setLoading(false);
-      console.log(savedUser,'savedUser------------');
       if(savedUser?.status ==="Pending"){
         navigate(`/verify-email/${savedUser.user}`);
       }
@@ -142,6 +143,34 @@ const Form = () => {
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
   };
+
+  const handleGoogleLogin = async (response) => {
+        const data = JSON.stringify({ token: response.credential })
+        axios.post(`${process.env.REACT_APP_BASE_URL}/auth/google-login`, data, {
+            headers: { "Content-Type": "application/json" },
+        }).then((response) => {
+            dispatch(
+                setLogin({
+                    token: response.data.token,
+                })
+            );
+            dispatch(
+              setUserData({
+                    user: response.data.user,
+                })
+            );
+            navigate('/home');
+        })
+            .catch((err) => {
+                console.log(err);
+                ((error) => {
+                    toast.error(error.response.data.msg, {
+                        position: "top-center",
+                    });
+                })(err);
+            });
+    }
+
 
   return (
     <Formik
@@ -324,6 +353,18 @@ const Form = () => {
                 </Typography>
               </Link>
             )}
+          </Box>
+          <Box sx={{display:'flex', justifyContent:"center"}}>
+          <GoogleLogin
+            onSuccess={response => {
+              handleGoogleLogin(response)
+            }}
+          
+            onError={() => {
+              console.log('Login Failed');
+            }}
+          
+          />
           </Box>
           <Toaster />
         </form>

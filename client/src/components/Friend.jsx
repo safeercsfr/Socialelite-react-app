@@ -1,9 +1,5 @@
-import {
-  PersonAddOutlined,
-  PersonRemoveOutlined,
-  Delete,
-} from "@mui/icons-material";
-import { Box, IconButton, Typography, useTheme, Button } from "@mui/material";
+
+import { Box, Typography, useTheme, Button } from "@mui/material";
 import { ConfirmToast } from "react-confirm-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -27,8 +23,6 @@ const Friend = ({
   const friends = useSelector((state) => state.user.friends);
 
   const { palette } = useTheme();
-  const primaryLight = palette.primary.light;
-  const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
 
@@ -90,10 +84,7 @@ const Friend = ({
           showCloseIcon={true}
           theme={"snow"}
         >
-          {/* <IconButton sx={{ backgroundColor: primaryLight, p: "0.6rem" }}> */}
-            {/* <Delete /> */}
             <Button>Delete</Button>
-          {/* </IconButton> */}
         </ConfirmToast>
       ) : (
         <Box onClick={() => patchFriend()}>

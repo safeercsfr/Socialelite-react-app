@@ -1,17 +1,14 @@
 import { useTheme } from "@emotion/react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { getDataAPI, postDataAPI } from "utils/fetchData";
+import { Link } from "react-router-dom";
+import { postDataAPI } from "utils/fetchData";
 
 export const ForgotPassword = () => {
-  const { id, token } = useParams();
-  const history = useNavigate();
   const theme = useTheme();
   const [isVerified, setIsVerified] = useState(false);
-  const [url, setUrl] = useState("");
   const [email, setEmail] = useState("");
 
   const handleClick = async (e) => {

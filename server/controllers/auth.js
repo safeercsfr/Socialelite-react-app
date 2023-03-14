@@ -9,6 +9,7 @@ import VerificationTokenModel from "../models/VerificationToken.js";
 import resetTokenModel from "../models/ResetToken.js";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { OAuth2Client } from "google-auth-library";
 dotenv.config();
 
 // REGISTER USER
@@ -319,5 +320,55 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+const CLIENT_ID =
+  "954345091005-9rh0rau0hn2lv9tou1v2ai955gqpsnnd.apps.googleusercontent.com";
+async function verify(client_id, jwtToken) {
+  const client = new OAuth2Client(client_id);
+  // Call the verifyIdToken to
+  // varify and decode it
+  const ticket = await client.verifyIdToken({
+    idToken: jwtToken,
+    audience: client_id,
+  });
+  // Get the JSON with all the user info
+  const payload = ticket.getPayload();
+  // This is a JSON object that contains
+  // all the user info
+  return payload;
+}
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const data =await verify(
+      CLIENT_ID,
+      token
+    );
+    console.log(data);
+    const { given_name, family_name, email, picture } = await verify(
+      CLIENT_ID,
+      token
+    );
+    const user = await User.findOne({ email: email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      res.status(200).json({ token, user });
+    } else {
+      const newUser = new User({
+        firstName: given_name,
+        lastName: family_name,
+        email: email,
+        picturePath: picture,
+      });
+
+      const svedUser = await newUser.save();
+      const token = jwt.sign({ id: svedUser._id }, process.env.JWT_SECRET);
+      res.status(200).json({ token, user: svedUser });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ success: false, message: "Invalid token" });
   }
 };
