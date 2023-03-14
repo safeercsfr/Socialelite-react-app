@@ -23,11 +23,6 @@ export const ResetPassword = () => {
           position: "bottom-center",
         });
       }
-      if (password.length < 6 && password.length > 1) {
-        toast.error("Password must have 6 characters", {
-          position: "bottom-center",
-        });
-      }
 
       const { data } = await putDataAPI(`/auth/reset-password/?${code}`, {
         password,

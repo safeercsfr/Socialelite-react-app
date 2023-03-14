@@ -278,20 +278,22 @@ export const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Token is not valid" });
     }
 
-    // await Promise.all([
-    //   body("password")
-    //     .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
-    //     .withMessage(
-    //       "Password should contain at least 8 characters, one uppercase letter and one number"
-    //     )
-    //     .run(req),
-    // ]);
+    await Promise.all([
+      body("password")
+      .isLength({ min: 8 })
+      .withMessage("Password must be at least 8 characters long")
+      .matches(/[A-Z]/)
+      .withMessage("Password must contain at least one uppercase letter")
+      .matches(/[!@#$%^&*(),.?":{}|<>]/)
+      .withMessage("Password must contain at least one symbol (!@#$%^&*(),.?\":{}|<>)")
+      .run(req)
+    ]);
 
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //   const errorMessages = errors.array().map((error) => error.msg);
-    //   return res.status(400).json({ error: errorMessages });
-    // }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errorMessages = errors.array().map((error) => error.msg);
+      return res.status(400).json({ error: errorMessages });
+    }
 
     const { password } = req.body;
     const hashPass = await bcrypt.hash(password, 10);
@@ -317,6 +319,9 @@ export const resetPassword = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// GOOGLE SIGNUP 
+
 const CLIENT_ID = process.env.CLIENT_ID;
 async function verify(client_id, jwtToken) {
   const client = new OAuth2Client(client_id);

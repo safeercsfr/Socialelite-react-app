@@ -96,7 +96,7 @@ const Form = () => {
       const savedUser = data;
       onSubmitProps.resetForm();
       setLoading(false);
-      if(savedUser?.status ==="Pending"){
+      if (savedUser?.status === "Pending") {
         navigate(`/verify-email/${savedUser.user}`);
       }
       // if (savedUser) setPageType("login");
@@ -145,32 +145,33 @@ const Form = () => {
   };
 
   const handleGoogleLogin = async (response) => {
-        const data = JSON.stringify({ token: response.credential })
-        axios.post(`${process.env.REACT_APP_BASE_URL}/auth/google-login`, data, {
-            headers: { "Content-Type": "application/json" },
-        }).then((response) => {
-            dispatch(
-                setLogin({
-                    token: response.data.token,
-                })
-            );
-            dispatch(
-              setUserData({
-                    user: response.data.user,
-                })
-            );
-            navigate('/home');
-        })
-            .catch((err) => {
-                console.log(err);
-                ((error) => {
-                    toast.error(error.response.data.msg, {
-                        position: "top-center",
-                    });
-                })(err);
-            });
-    }
-
+    const data = JSON.stringify({ token: response.credential });
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}/auth/google-login`, data, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        dispatch(
+          setLogin({
+            token: response.data.token,
+          })
+        );
+        dispatch(
+          setUserData({
+            user: response.data.user,
+          })
+        );
+        navigate("/home");
+      })
+      .catch((err) => {
+        console.log(err);
+        ((error) => {
+          toast.error(error.response.data.msg, {
+            position: "top-center",
+          });
+        })(err);
+      });
+  };
 
   return (
     <Formik
@@ -354,17 +355,16 @@ const Form = () => {
               </Link>
             )}
           </Box>
-          <Box sx={{display:'flex', justifyContent:"center"}}>
-          <GoogleLogin
-            onSuccess={response => {
-              handleGoogleLogin(response)
-            }}
-          
-            onError={() => {
-              console.log('Login Failed');
-            }}
-          
-          />
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <GoogleLogin
+              onSuccess={(response) => {
+                handleGoogleLogin(response);
+              }}
+              shape="pill"
+              onError={() => {
+                console.log("Login Failed");
+              }}
+            />
           </Box>
           <Toaster />
         </form>
