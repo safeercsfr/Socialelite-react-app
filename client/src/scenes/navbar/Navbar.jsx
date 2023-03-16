@@ -156,7 +156,7 @@ const Navbar = () => {
                               />
                               <Typography
                                 variant="subtitle2"
-                                sx={{ color: "black" }}
+                                color={dark}
                               >
                                 {user1.firstName} {user1.lastName}
                               </Typography>

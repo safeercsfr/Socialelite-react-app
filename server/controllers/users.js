@@ -65,10 +65,9 @@ export const getSuggestionUsers = async (req, res) => {
 export const getUserFriends = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
-
+    const currentUser = await User.findById(id);
     const friends = await Promise.all(
-      user.friends.map((id) => User.findById(id))
+      currentUser.friends.map(({ following }) => User.findById(following))
     );
     const formattedFriends = friends.map(
       ({ _id, firstName, lastName, occupation, location, picturePath }) => {

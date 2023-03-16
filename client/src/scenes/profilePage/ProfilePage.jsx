@@ -8,7 +8,7 @@ import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import UserWidget from "scenes/widgets/UserWidget";
 import { getDataAPI, putDataAPI } from "utils/fetchData";
-import { setFriends, setIsEditing } from "state/authSlice";
+import { setIsEditing } from "state/authSlice";
 import UserEdit from "scenes/widgets/UserEdit";
 import { toast, Toaster } from "react-hot-toast";
 import { setUserData } from "state/authSlice";
@@ -23,11 +23,12 @@ const ProfilePage = () => {
   const user = useSelector((state) => state.user);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
+
   const getFriendData = async () => {
     try {
       const { data } = await getDataAPI(`/users/${userId}`, token);
       setFriendDetails(data);
-      // dispatch(setUserData({ user: data }));
+      dispatch(setIsEditing({ isEditing: false }));
     } catch (error) {
       console.error(error);
     }

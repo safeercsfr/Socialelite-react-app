@@ -144,6 +144,36 @@ const Form = () => {
     if (isRegister) await register(values, onSubmitProps);
   };
 
+  // const handleGoogleLogin = async (response) => {
+  //   const token =response.credential
+  //   console.log(token);
+  //   try {
+  //     const { data } = await postDataAPI(
+  //       `/auth/google-login`,
+  //       token
+  //     );
+  //     if (data) {
+  //       dispatch(
+  //         setLogin({
+  //           token: data.token,
+  //         })
+  //       );
+  //       dispatch(
+  //         setUserData({
+  //           user: data.user,
+  //         })
+  //       );
+  //       navigate("/home");
+  //     }
+  //   } catch (err) {
+  //     ((error) => {
+  //       toast.error(error.response.data.msg, {
+  //         position: "top-center",
+  //       });
+  //     })(err);
+  //   }
+  // };
+
   const handleGoogleLogin = async (response) => {
     const data = JSON.stringify({ token: response.credential });
     axios

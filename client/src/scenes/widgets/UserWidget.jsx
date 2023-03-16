@@ -4,15 +4,15 @@ import {
   LocationOnOutlined,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
-import { Box, Typography, Divider, useTheme } from "@mui/material";
+import { Box, Typography, Divider, useTheme, Button } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getDataAPI } from "utils/fetchData";
-import { setIsEditing } from "state/authSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import { getDataAPI, patchDataAPI } from "utils/fetchData";
+import { setFriends, setIsEditing } from "state/authSlice";
 
 const UserWidget = ({
   userId,
@@ -31,24 +31,46 @@ const UserWidget = ({
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
   const dispatch = useDispatch();
+  const {userId:friendId} = useParams()
+  console.log(friendId,'userId-------');
+  const friends = useSelector((state) => state.user.friends);
+  const [isFriend,setIsFriend] = useState(friends.find((friend) => friend?._id === friendId))
+  // console.log(friendId,'kk');
 
+  const patchFriend = async () => {
+    try {
+      console.log(friendId,'inside');
+      const { data } = await patchDataAPI(
+        `/users/${user._id}/${friendId}`,
+        {},
+        token
+      );
+      dispatch(setFriends({ friends: data }));
+      setIsFriend(!isFriend)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const { data } = await getDataAPI(`/users/${userId}`, token);
         setFriendData(data);
 
-        const { data: followersData } = await getDataAPI(`/users/${userId}/followers`, token);
+        const { data: followersData } = await getDataAPI(
+          `/users/${userId}/followers`,
+          token
+        );
         setFollowers(followersData);
       } catch (error) {
         console.error(error);
       }
     };
-  
+
     fetchData();
-    
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  
 
   let handleEditClick = () => {
     dispatch(setIsEditing({ isEditing: true }));
@@ -66,7 +88,6 @@ const UserWidget = ({
     // impressions,
     // friends,
   } = user;
-
   return (
     <WidgetWrapper
     // style={isProfile ? {} : { position: "sticky", top: "7.3rem" }}
@@ -97,11 +118,11 @@ const UserWidget = ({
               {isFriendData ? friendData?.user?.firstName : firstName}{" "}
               {isFriendData ? friendData?.user?.lastName : lastName}
             </Typography>
-            {/* {isProfile && isFriendData ?<Button>Unfollow</Button> : <Button>Follow</Button>} */}
-            {/* <Typography color={medium}>
-              {isFriendData ? friendData?.user?.friends?.length : friends?.length}{" "}
-              friends
-            </Typography> */}
+            {isFriendData && (
+              <Box >
+                {isFriend ? <Button onClick={() => patchFriend()}>Unfollow</Button> : <Button onClick={() => patchFriend()}>Follow</Button>}
+              </Box>
+            )}
           </Box>
         </FlexBetween>
         {isEditUser && (

@@ -3,8 +3,6 @@ import { Box } from "@mui/system";
 import { useSelector } from "react-redux";
 import Navbar from "scenes/navbar/Navbar";
 import ChatList from "scenes/widgets/ChatList";
-import UserSuggestion from "scenes/widgets/UserSuggestion";
-import UserWidget from "scenes/widgets/UserWidget";
 
 const MessagePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
