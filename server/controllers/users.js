@@ -8,10 +8,10 @@ export const getUser = async (req, res) => {
     const user = await User.findById(id);
 
     const followingCount = await User.countDocuments({
-      "friends.followers": id,
+      "followers": id,
     });
     const followersCount = await User.countDocuments({
-      "friends.following": id,
+      "followings": id,
     });
 
     res.status(200).json({
@@ -29,10 +29,10 @@ export const getUserFollowers = async (req, res) => {
     const { id } = req.params;
     const user = await User.findById(id);
     const followingCount = await User.countDocuments({
-      "friends.followers": id,
+      "followers": id,
     });
     const followersCount = await User.countDocuments({
-      "friends.following": id,
+      "followings": id,
     });
     res
       .status(200)
@@ -54,9 +54,9 @@ export const getSuggestionUsers = async (req, res) => {
   try {
     const { id } = req.params;
     const currentUser = await User.findById(id);
-    const following = currentUser.friends.map((friend) => friend.following);
-    const user = await User.find({ _id: { $nin: [following, id] } });
-    res.status(200).json(user);
+    const following = currentUser.followings.map((friend) => friend);
+    const suggestions = await User.find({ _id: { $nin: [...following, id] } });
+    res.status(200).json(suggestions);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
@@ -65,55 +65,185 @@ export const getSuggestionUsers = async (req, res) => {
 export const getUserFriends = async (req, res) => {
   try {
     const { id } = req.params;
-    const currentUser = await User.findById(id);
-    const friends = await Promise.all(
-      currentUser.friends.map(({ following }) => User.findById(following))
+    const user = await User.findById(id);
+    const F1 = await Promise.all(
+      user.followings.map((id) => User.findById(id))
     );
-    const formattedFriends = friends.map(
+    const formattedFollowings = F1.map(
       ({ _id, firstName, lastName, occupation, location, picturePath }) => {
         return { _id, firstName, lastName, occupation, location, picturePath };
       }
     );
-    res.status(200).json(formattedFriends);
+    const F2 = await Promise.all(
+      user.followers.map((id) => User.findById(id))
+    );
+    const formattedFollowers = F2.map(
+      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
+        return { _id, firstName, lastName, occupation, location, picturePath };
+      }
+    );
+    const currentUser = await User.findById(id);
+    const following = currentUser.followings.map((friend) => friend);
+    const suggestions = await User.find({ _id: { $nin: [...following, id] } });
+
+    res.status(200).json({formattedFollowings,formattedFollowers,suggestions});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
 /* UPDATE */
-export const addRemoveFriend = async (req, res) => {
+export const followFriend = async (req, res) => {
   try {
     const { id, friendId } = req.params;
     const user = await User.findById(id);
+
     const friend = await User.findById(friendId);
+        if (!friend) {
+            return res.status(400).json({ msg: "User does not exist" })
+        }
+        if (!friend.followers.includes(id)) { 
+            friend.followers.push(id);
+            await friend.save();
+        }
 
-    if (user.friends.some((friend) => friend.following === friendId)) {
-      user.friends = user.friends.filter(
-        ({ following }) => following !== friendId
-      );
-      friend.friends = friend.friends.filter(
-        ({ followers }) => followers !== id
-      );
-    } else {
-      user.friends.push({ following: friendId });
-      friend.friends.push({ followers: id });
-    }
-    await user.save();
-    await friend.save();
+        if (!user) {
+            return res.status(400).json({ msg: "User does not exist" })
+        }
+        if (!user.followings.includes(friendId)) { 
+            user.followings.push(friendId);
+            await user.save();
+        }
 
-    const friends = await Promise.all(
-      user.friends.map(({ following }) => User.findById(following))
-    );
-    const formattedFriends = friends.map(
+    const F1 = await Promise.all(
+      user.followings.map((id) => User.findById(id))
+      );
+    const formattedFollowings = F1.map(
       ({ _id, firstName, lastName, occupation, location, picturePath }) => {
         return { _id, firstName, lastName, occupation, location, picturePath };
       }
     );
-    res.status(200).json(formattedFriends);
+
+    const F2 = await Promise.all(
+      user.followers.map((id) => User.findById(id))
+    );
+
+    const formattedFollowers = F2.map(
+      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
+        return { _id, firstName, lastName, occupation, location, picturePath };
+      }
+    );
+
+    const currentUser = await User.findById(id);
+    const following = currentUser.followings.map((friend) => friend);
+    const suggestions = await User.find({ _id: { $nin: [...following, id] } });
+    console.log(suggestions,'lllllllll');
+
+    res.status(200).json({formattedFollowings,formattedFollowers});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const unFollowFriend = async (req, res) => {
+  try {
+    const { id, friendId } = req.params;
+    const user = await User.findById(id);
+
+    const friend = await User.findById(friendId);
+        if (!friend) {
+            return res.status(400).json({ msg: "User does not exist" })
+        }
+        if (friend.followers.includes(id)) { 
+            const index = friend.followers.indexOf(id);
+            friend.followers.splice(index, 1); 
+            await friend.save();
+        }
+
+        if (!user) {
+            return res.status(400).json({ msg: "User does not exist" })
+        }
+        if (user.followings.includes(friendId)) { 
+            const index = user.followings.indexOf(friendId);
+            user.followings.splice(index, 1); 
+            await user.save();
+        }
+
+    const F1 = await Promise.all(
+      user.followings.map((id) => User.findById(id))
+    );
+    const formattedFollowings = F1.map(
+      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
+        return { _id, firstName, lastName, occupation, location, picturePath };
+      }
+    );
+    const F2 = await Promise.all(
+      user.followers.map((id) => User.findById(id))
+    );
+    const formattedFollowers = F2.map(
+      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
+        return { _id, firstName, lastName, occupation, location, picturePath };
+      }
+    );
+    const currentUser = await User.findById(id);
+    const following = currentUser.followings.map((friend) => friend);
+    const suggestions = await User.find({ _id: { $nin: [...following, id] } });
+
+    res.status(200).json({formattedFollowings,formattedFollowers,suggestions});
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const followBackFriend = async (req, res) => {
+  try {
+    const { id, friendId } = req.params;
+    const user = await User.findById(id);
+
+    const friend = await User.findById(friendId);
+        if (!friend) {
+            return res.status(400).json({ msg: "User does not exist" })
+        }
+        if (!friend.followers.includes(id)) { // Check if userId is not already in followers
+            friend.followers.push(id);
+            await friend.save();
+        }
+
+        if (!user) {
+            return res.status(400).json({ msg: "User does not exist" })
+        }
+        if (!user.followings.includes(friendId)) { // Check if userIdToFollow is not already in following
+            user.followings.push(friendId);
+            await user.save();
+        }
+
+    const F1 = await Promise.all(
+      user.followings.map((id) => User.findById(id))
+    );
+    const formattedFollowings = F1.map(
+      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
+        return { _id, firstName, lastName, occupation, location, picturePath };
+      }
+    );
+    const F2 = await Promise.all(
+      user.followers.map((id) => User.findById(id))
+    );
+    const formattedFollowers = F2.map(
+      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
+        return { _id, firstName, lastName, occupation, location, picturePath };
+      }
+    );
+    const currentUser = await User.findById(id);
+    const following = currentUser.followings.map((friend) => friend);
+    const suggestions = await User.find({ _id: { $nin: [...following, id] } });
+
+    res.status(200).json({formattedFollowings,formattedFollowers,suggestions});
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 
 export const updateUser = async (req, res) => {
   try {

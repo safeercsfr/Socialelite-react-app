@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react";
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import WidgetWrapper from "components/WidgetWrapper";
+import WidgetWrapper from "Components/WidgetWrapper";
 import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -36,7 +36,7 @@ const VerifyEmail = () => {
       }
     } catch (err) {
       (({ response }) => {
-        toast.error(response.data.message, {
+        toast.error(response?.data?.message, {
           position: "bottom-center",
         });
       })(err);
@@ -48,7 +48,7 @@ const VerifyEmail = () => {
       <Box>
         <Box
           width="100%"
-          backgroundColor={theme.palette.background.alt}
+          backgroundColor={theme?.palette?.background?.alt}
           p="1rem 6%"
           textAlign="center"
         >
@@ -68,7 +68,6 @@ const VerifyEmail = () => {
             <Box p="1rem" sx={{ width: "30rem", alignItems: "center" }}>
               <Typography
                 variant="h4"
-                //   color={}
                 fontWeight="500"
                 mb="1rem"
                 sx={{ display: "flex", alignItems: "center" }}
@@ -80,7 +79,6 @@ const VerifyEmail = () => {
                   <TextField
                     name="otp"
                     label="OTP"
-                    // value={email}
                     onChange={(e) => setOTP(e.target.value)}
                     margin="normal"
                     variant="outlined"
@@ -104,10 +102,10 @@ const VerifyEmail = () => {
                   sx={{
                     textAlign: "left",
                     textDecoration: "underline",
-                    color: palette.primary.main,
+                    color: palette?.primary?.main,
                     "&:hover": {
                       cursor: "pointer",
-                      color: palette.primary.light,
+                      color: palette?.primary?.light,
                     },
                   }}
                 >

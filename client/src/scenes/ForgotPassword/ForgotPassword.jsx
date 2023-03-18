@@ -1,6 +1,6 @@
 import { useTheme } from "@emotion/react";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import WidgetWrapper from "components/WidgetWrapper";
+import WidgetWrapper from "Components/WidgetWrapper";
 import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -33,7 +33,7 @@ export const ForgotPassword = () => {
       }
     } catch (err) {
        (({ response }) => {
-        toast.error(response.data.message, {
+        toast.error(response?.data?.message, {
           position: "bottom-center",
         });
       })(err);
@@ -45,7 +45,7 @@ export const ForgotPassword = () => {
       <Box>
         <Box
           width="100%"
-          backgroundColor={theme.palette.background.alt}
+          backgroundColor={theme?.palette?.background?.alt}
           p="1rem 6%"
           textAlign="center"
         >

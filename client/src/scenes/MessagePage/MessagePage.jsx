@@ -1,12 +1,12 @@
 import { useMediaQuery } from "@mui/material";
 import { Box } from "@mui/system";
-import { useSelector } from "react-redux";
-import Navbar from "scenes/navbar/Navbar";
-import ChatList from "scenes/widgets/ChatList";
+import Navbar from "scenes/Navbar/Navbar";
+import ChatBox from "scenes/Widgets/ChatBox";
+import ChatList from "scenes/Widgets/ChatList";
 
 const MessagePage = () => {
+
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
-  const { _id, picturePath } = useSelector((state) => state.user);
 
   return (
     <Box>
@@ -18,21 +18,18 @@ const MessagePage = () => {
         gap="2rem"
         justifyContent="center"
       >
-        {/* <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-        <UserWidget userId={_id} picturePath={picturePath} />
+        <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
+          <ChatList/>
           <Box m="2rem 0" />
-          <UserSuggestion />
-        </Box> */}
-        
-          <Box
-            flexBasis={isNonMobileScreens ? "42%" : undefined}
-            mt={isNonMobileScreens ? undefined : "2rem"}
-          >
-            <ChatList/>
-            {/* <ChatBox/> */}
-            <Box m="2rem 0" />
-            {/* <PostsWidget userId={userId} isProfile /> */}
-          </Box>
+        </Box>
+
+        <Box
+          flexBasis={isNonMobileScreens ? "42%" : undefined}
+          mt={isNonMobileScreens ? undefined : "2rem"}
+        >
+          <ChatBox />
+          <Box m="2rem 0" />
+        </Box>
       </Box>
     </Box>
   );

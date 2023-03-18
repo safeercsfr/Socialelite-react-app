@@ -5,14 +5,14 @@ import {
   WorkOutlineOutlined,
 } from "@mui/icons-material";
 import { Box, Typography, Divider, useTheme, Button } from "@mui/material";
-import UserImage from "components/UserImage";
-import FlexBetween from "components/FlexBetween";
-import WidgetWrapper from "components/WidgetWrapper";
+import UserImage from "Components/UserImage";
+import FlexBetween from "Components/FlexBetween";
+import WidgetWrapper from "Components/WidgetWrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getDataAPI, patchDataAPI } from "utils/fetchData";
-import { setFriends, setIsEditing } from "state/authSlice";
+import { setIsEditing } from "state/authSlice";
 
 const UserWidget = ({
   userId,
@@ -25,27 +25,27 @@ const UserWidget = ({
   const navigate = useNavigate();
   const [friendData, setFriendData] = useState({});
   const [followers, setFollowers] = useState({});
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
-  const dark = palette.neutral.dark;
-  const medium = palette.neutral.medium;
-  const main = palette.neutral.main;
+  const token = useSelector((state) => state?.token);
+  const user = useSelector((state) => state?.user);
+  const dark = palette?.neutral?.dark;
+  const medium = palette?.neutral?.medium;
+  const main = palette?.neutral?.main;
   const dispatch = useDispatch();
   const {userId:friendId} = useParams()
-  console.log(friendId,'userId-------');
-  const friends = useSelector((state) => state.user.friends);
-  const [isFriend,setIsFriend] = useState(friends.find((friend) => friend?._id === friendId))
+  
+  const followings = useSelector((state) => state?.user?.followings);
+  const [isFriend,setIsFriend] = useState(followings?.find((friend) => friend?._id === friendId))
   // console.log(friendId,'kk');
 
   const patchFriend = async () => {
     try {
       console.log(friendId,'inside');
       const { data } = await patchDataAPI(
-        `/users/${user._id}/${friendId}`,
+        `/users/${user?._id}/${friendId}`,
         {},
         token
       );
-      dispatch(setFriends({ friends: data }));
+      // dispatch(setFriends({ friends: data }));
       setIsFriend(!isFriend)
     } catch (error) {
       console.log(error);
@@ -84,13 +84,9 @@ const UserWidget = ({
     lastName,
     location,
     occupation,
-    // viewProfile,
-    // impressions,
-    // friends,
   } = user;
   return (
     <WidgetWrapper
-    // style={isProfile ? {} : { position: "sticky", top: "7.3rem" }}
     >
       {/* FIRST ROW */}
       <FlexBetween
@@ -110,7 +106,7 @@ const UserWidget = ({
               fontWeight="500"
               sx={{
                 "&:hover": {
-                  color: palette.primary.light,
+                  color: palette?.primary?.light,
                   cursor: "pointer",
                 },
               }}
@@ -156,16 +152,16 @@ const UserWidget = ({
           <Typography color={medium}>Following</Typography>
           <Typography color={main} fontWeight="500">
             {isFriendData
-              ? friendData.followingCount
-              : followers.followingCount}
+              ? friendData?.followingCount
+              : followers?.followingCount}
           </Typography>
         </FlexBetween>
         <FlexBetween>
           <Typography color={medium}>Followers</Typography>
           <Typography color={main} fontWeight="500">
             {isFriendData
-              ? friendData.followersCount
-              : followers.followersCount}
+              ? friendData?.followersCount
+              : followers?.followersCount}
           </Typography>
         </FlexBetween>
       </Box>

@@ -7,16 +7,16 @@ import { setProfileImg } from "state/authSlice";
 
 const ProfilePhotoEdit = ({ setIsEdit }) => {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state?.token);
 
   const handleFileChange = async (e) => {
     try {
-      const selectedFile = e.target.files[0];
+      const selectedFile = e.target?.files[0];
       const formData = new FormData();
       formData.append("picture", selectedFile);
       const { data } = await putDataAPI('/auth/update', formData, token);
       if (data) {
-        dispatch(setProfileImg({ picturePath: data.picturePath }));
+        dispatch(setProfileImg({ picturePath: data?.picturePath }));
         setIsEdit(false);
       }
     } catch (error) {

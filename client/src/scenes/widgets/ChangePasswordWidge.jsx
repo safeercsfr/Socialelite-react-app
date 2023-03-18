@@ -2,7 +2,7 @@ import { TextField, Box, Typography, Grid, useTheme } from "@mui/material";
 import { Button } from "@mui/material";
 import { EditOutlined } from "@mui/icons-material";
 import { useState } from "react";
-import WidgetWrapper from "components/WidgetWrapper";
+import WidgetWrapper from "Components/WidgetWrapper";
 import * as yup from "yup";
 
 const passwordSchema = yup.object().shape({
@@ -27,7 +27,7 @@ const passwordSchema = yup.object().shape({
 
 const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
   const { palette } = useTheme();
-  const dark = palette.neutral.dark;
+  const dark = palette?.neutral?.dark;
   const [formValues, setFormValues] = useState({
     oldPassword: "",
     newPassword: "",
@@ -40,7 +40,7 @@ const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
   });
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const { name, value } = event?.target;
     setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
   };
 
@@ -50,9 +50,9 @@ const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
       .then(() => {
         onPasswordSave({
           ...user,
-          oldPassword: formValues.oldPassword,
-          newPassword: formValues.newPassword,
-          confirmPassword: formValues.confirmPassword,
+          oldPassword: formValues?.oldPassword,
+          newPassword: formValues?.newPassword,
+          confirmPassword: formValues?.confirmPassword,
         });
       })
       .catch((errors) => {
@@ -83,10 +83,10 @@ const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
               label="Old Password"
               type="password"
               name="oldPassword"
-              value={formValues.oldPassword}
+              value={formValues?.oldPassword}
               onChange={handleChange}
-              error={!!formErrors.oldPassword}
-              helperText={formErrors.oldPassword}
+              error={!!formErrors?.oldPassword}
+              helperText={formErrors?.oldPassword}
             />
           </Grid>
           <Grid item xs={12}>
@@ -95,10 +95,10 @@ const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
               label="New Password"
               type="password"
               name="newPassword"
-              value={formValues.newPassword}
+              value={formValues?.newPassword}
               onChange={handleChange}
-              error={!!formErrors.newPassword}
-              helperText={formErrors.newPassword}
+              error={!!formErrors?.newPassword}
+              helperText={formErrors?.newPassword}
             />
           </Grid>
           <Grid item xs={12}>
@@ -107,10 +107,10 @@ const ChangePasswordWidget = ({ user, onPasswordSave, onCancel }) => {
               label="Confirm Password"
               type="password"
               name="confirmPassword"
-              value={formValues.confirmPassword}
+              value={formValues?.confirmPassword}
               onChange={handleChange}
-              error={!!formErrors.confirmPassword}
-              helperText={formErrors.confirmPassword}
+              error={!!formErrors?.confirmPassword}
+              helperText={formErrors?.confirmPassword}
             />
           </Grid>
         </Grid>

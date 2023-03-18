@@ -1,10 +1,7 @@
 import {
   EditOutlined,
   DeleteOutlined,
-  AttachFileOutlined,
-  GifBoxOutlined,
   ImageOutlined,
-  MicOutlined,
   MoreHorizOutlined,
 } from "@mui/icons-material";
 import {
@@ -13,14 +10,13 @@ import {
   Typography,
   InputBase,
   useTheme,
-  // Button,
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import FlexBetween from "components/FlexBetween";
+import FlexBetween from "Components/FlexBetween";
 import Dropzone from "react-dropzone";
-import UserImage from "components/UserImage";
-import WidgetWrapper from "components/WidgetWrapper";
+import UserImage from "Components/UserImage";
+import WidgetWrapper from "Components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state/authSlice";
@@ -36,12 +32,12 @@ const MyPostWidget = ({ picturePath }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const { palette } = useTheme();
-  const { _id } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
-  const posts = useSelector((state) => state.posts);
+  const { _id } = useSelector((state) => state?.user);
+  const token = useSelector((state) => state?.token);
+  const posts = useSelector((state) => state?.posts);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
-  const mediumMain = palette.neutral.mediumMain;
-  const medium = palette.neutral.medium;
+  const mediumMain = palette?.neutral?.mediumMain;
+  const medium = palette?.neutral?.medium;
 
   const postSchema = Yup.object().shape({
     post: Yup.string()
@@ -59,7 +55,7 @@ const MyPostWidget = ({ picturePath }) => {
       if (image) {
         setLoading(true);
         formData.append("picture", image);
-        formData.append("picturePath", image.name);
+        formData.append("picturePath", image?.name);
       }
 
       const { data } = await postDataAPI("/posts", formData, token);
@@ -71,7 +67,7 @@ const MyPostWidget = ({ picturePath }) => {
     } catch (error) {
       console.error(error);
       if (error.name === "ValidationError") {
-        const errors = error.inner.reduce(
+        const errors = error?.inner?.reduce(
           (acc, err) => ({
             ...acc,
             [err.path]: err.message,
@@ -84,10 +80,10 @@ const MyPostWidget = ({ picturePath }) => {
       }
     }
   };
-  const handleChange=(e)=>{
-    setErrors({})
-    setPost(e.target.value)
-  }
+  const handleChange = (e) => {
+    setErrors({});
+    setPost(e.target.value);
+  };
 
   return (
     <WidgetWrapper>
@@ -99,14 +95,14 @@ const MyPostWidget = ({ picturePath }) => {
           value={post}
           sx={{
             width: "100%",
-            backgroundColor: palette.neutral.light,
+            backgroundColor: palette?.neutral?.light,
             borderRadius: "2rem",
             padding: "1rem 2rem",
             border: errors.post ? "1px solid red" : "none", // add border style for error
           }}
         />
       </FlexBetween>
-      {errors.post && (
+      {errors?.post && (
         <Typography
           color="red"
           sx={{
@@ -114,7 +110,7 @@ const MyPostWidget = ({ picturePath }) => {
             textAlign: "center",
           }}
         >
-          {errors.post}
+          {errors?.post}
         </Typography>
       )}
       {isImage && (
@@ -138,7 +134,7 @@ const MyPostWidget = ({ picturePath }) => {
               <FlexBetween>
                 <Box
                   {...getRootProps()}
-                  border={`2px dashed ${palette.primary.main}`}
+                  border={`2px dashed ${palette?.primary?.main}`}
                   p="1rem"
                   width="100%"
                   sx={{ "&:hover": { cursor: "pointer" } }}
@@ -209,8 +205,8 @@ const MyPostWidget = ({ picturePath }) => {
           disabled={!post}
           onClick={handlePost}
           sx={{
-            color: palette.background.alt,
-            backgroundColor: palette.primary.main,
+            color: palette?.background?.alt,
+            backgroundColor: palette?.primary?.main,
             borderRadius: "3rem",
           }}
         >

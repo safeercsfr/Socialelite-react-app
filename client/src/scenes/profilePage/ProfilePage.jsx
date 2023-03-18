@@ -1,27 +1,30 @@
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Button, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import Navbar from "scenes/navbar/Navbar";
-import FriendListWidget from "scenes/widgets/FriendListWidget";
-import MyPostWidget from "scenes/widgets/MyPostWidget";
-import PostsWidget from "scenes/widgets/PostsWidget";
-import UserWidget from "scenes/widgets/UserWidget";
+import { useNavigate, useParams } from "react-router-dom";
+import Navbar from "scenes/Navbar/Navbar";
+import FriendListWidget from "scenes/Widgets/FriendListWidget";
+import MyPostWidget from "scenes/Widgets/MyPostWidget";
+import PostsWidget from "scenes/Widgets/PostsWidget";
+import UserWidget from "scenes/Widgets/UserWidget";
 import { getDataAPI, putDataAPI } from "utils/fetchData";
 import { setIsEditing } from "state/authSlice";
-import UserEdit from "scenes/widgets/UserEdit";
+import UserEdit from "scenes/Widgets/UserEdit";
 import { toast, Toaster } from "react-hot-toast";
 import { setUserData } from "state/authSlice";
+import axios from "axios";
 
 const ProfilePage = () => {
-  const isEditing = useSelector((state) => state.isEditing);
+  const isEditing = useSelector((state) => state?.isEditing);
   const [friendData, setFriendData] = useState(false);
   const [friendDetails, setFriendDetails] = useState({});
   const dispatch = useDispatch();
   const { userId } = useParams();
-  const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const token = useSelector((state) => state?.token);
+  const user = useSelector((state) => state?.user);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+
 
 
   const getFriendData = async () => {
@@ -46,6 +49,20 @@ const ProfilePage = () => {
       console.error(err);
     }
   };
+
+  const createConverStation = async (friendId) => {
+    const { data } = await axios.post(`${process.env.REACT_APP_BASE_URL}/converstations`, { friendId }, {
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`,
+        },
+    })
+
+    if(data){
+      navigate(`/message`);
+    }
+}
+
   useEffect(() => {
     if (userId !== user?._id) {
       setFriendData(true);
@@ -70,9 +87,9 @@ const ProfilePage = () => {
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
           <UserWidget
-            userId={friendData ? friendDetails._id : userId}
+            userId={friendData ? friendDetails?._id : userId}
             picturePath={
-              friendData ? friendDetails.picturePath : user.picturePath
+              friendData ? friendDetails?.picturePath : user.picturePath
             }
             isEditUser={friendData ? false : true}
             isFriendData={friendData ? true : false}
@@ -81,7 +98,7 @@ const ProfilePage = () => {
           <Box m="2rem 0" />
           {!friendData && (
             <FriendListWidget
-              userId={friendData ? friendDetails._id : userId}
+              userId={friendData ? friendDetails?._id : userId}
               isFriendData={friendData ? true : false}
             />
           )}
@@ -102,13 +119,14 @@ const ProfilePage = () => {
             flexBasis={isNonMobileScreens ? "42%" : undefined}
             mt={isNonMobileScreens ? undefined : "2rem"}
           >
-            {!friendData && <MyPostWidget picturePath={user.picturePath} />}
+            {!friendData && <MyPostWidget picturePath={user?.picturePath} />}
             <Box m="2rem 0" />
             <PostsWidget userId={userId} isProfile />
           </Box>
         )}
       </Box>
       <Toaster />
+      {friendData ? <Button sx={{ margin: "1rem" }} onClick={() => createConverStation(userId)} variant='contained' size='small' >Message</Button> : ''}
     </Box>
   );
 };

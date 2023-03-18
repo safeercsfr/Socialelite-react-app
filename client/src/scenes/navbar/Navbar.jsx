@@ -25,7 +25,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state/authSlice";
 import { Link, useNavigate } from "react-router-dom";
-import FlexBetween from "components/FlexBetween";
+import FlexBetween from "Components/FlexBetween";
 import { getDataAPI } from "utils/fetchData";
 
 const Navbar = () => {
@@ -35,19 +35,19 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
+  const user = useSelector((state) => state?.user);
+  const token = useSelector((state) => state?.token);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const isMobileScreen = useMediaQuery("(max-width: 999px)");
   const theme = useTheme();
-  const neutralLight = theme.palette.neutral.light;
-  const dark = theme.palette.neutral.dark;
-  const background = theme.palette.background.default;
-  const primaryLight = theme.palette.primary.light;
-  const alt = theme.palette.background.alt;
+  const neutralLight = theme?.palette?.neutral?.light;
+  const dark = theme.palette?.neutral?.dark;
+  const background = theme?.palette?.background?.default;
+  const primaryLight = theme?.palette?.primary?.light;
+  const alt = theme.palette?.background?.alt;
 
-  const fullName = `${user ? user.firstName : "user"} ${
-    user ? user.lastName : "name"
+  const fullName = `${user ? user?.firstName : "user"} ${
+    user ? user?.lastName : "name"
   }`;
 
   const handleMessage = () => {
@@ -129,19 +129,19 @@ const Navbar = () => {
                 {users?.length > 0 ? (
                   <Box>
                     {users.map((user1) =>
-                      user1.firstName.toLowerCase().includes(search) |
-                        user1.lastName.toLowerCase().includes(search) &&
-                      user._id !== user1.id ? (
+                      user1?.firstName.toLowerCase().includes(search) |
+                        user1?.lastName.toLowerCase().includes(search) &&
+                      user._id !== user1?.id ? (
                         <Link
-                          key={user1._id}
+                          key={user1?._id}
                           style={{ textDecoration: "none" }}
-                          to={`/profile/${user1._id}`}
+                          to={`/profile/${user1?._id}`}
                         >
                           <Box
                             display="flex"
                             alignItems="center"
                             justifyContent="space-between"
-                            p={1} // add some padding
+                            p={1} 
                             borderRadius="5px"
                             _hover={{
                               backgroundColor: "rgba(255, 255, 255, 0.2)",
@@ -151,14 +151,14 @@ const Navbar = () => {
                             <Box sx={{ display: "flex", alignItems: "center" }}>
                               <Avatar
                                 alt="userImage"
-                                src={`${user1.picturePath}`}
+                                src={`${user1?.picturePath}`}
                                 sx={{ marginRight: 1 }}
                               />
                               <Typography
                                 variant="subtitle2"
                                 color={dark}
                               >
-                                {user1.firstName} {user1.lastName}
+                                {user1?.firstName} {user1?.lastName}
                               </Typography>
                             </Box>
                           </Box>
@@ -179,7 +179,7 @@ const Navbar = () => {
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">
           <IconButton onClick={() => dispatch(setMode())}>
-            {theme.palette.mode === "dark" ? (
+            {theme?.palette?.mode === "dark" ? (
               <LightMode sx={{ fontSize: "25px" }} />
             ) : (
               <DarkMode sx={{ color: dark, fontSize: "25px" }} />

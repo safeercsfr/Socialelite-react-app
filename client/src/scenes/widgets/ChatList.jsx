@@ -1,53 +1,40 @@
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
 import List from "@mui/material/List";
 import { useSelector } from "react-redux";
-import { useEffect, useState, useContext } from "react";
-// import SocketContext from "../../utils/socket";
+import { useEffect, useState } from "react";
 import ChatItem from "./ChatItem";
-import WidgetWrapper from "components/WidgetWrapper";
+import WidgetWrapper from "Components/WidgetWrapper";
+import axios from "axios";
 
 const ChatList = () => {
   const [converstations, setConverstations] = useState([]);
-  const userId = useSelector((state) => state.user._id);
-  const token = useSelector((state) => state.token);
-  // const socket = useContext(SocketContext);
+  const userId = useSelector((state) => state?.user?._id);
+  const token = useSelector((state) => state?.token);
 
   useEffect(() => {
-    // socket.current?.on("get_users", (users) => {
-    //   console.log(users);
-    // });
+    const getConverstations = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/converstations/${userId}`,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setConverstations(res?.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getConverstations();
   }, []);
-
-  useEffect(() => {
-    // const getConverstations = async () => {
-    //   try {
-    //     const res = await axios.get(`api/converstation/${userId}`, {
-    //       headers: {
-    //         "Content-Type": "multipart/form-data",
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     });
-
-    //     setConverstations(res.data);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
-    // getConverstations();
-  }, []);
-
+  console.log(converstations, "--converstations");
   return (
     <WidgetWrapper>
-    <Box flex={4}>
-      {/* <Card
-        sx={{
-          height: "90vh",
-          width: "98%",
-        }}
-      > */}
+      <Box flex={4}>
         <Box
           sx={{
             textAlign: "center",
@@ -58,7 +45,7 @@ const ChatList = () => {
           </Typography>
         </Box>
         <Box>
-          <Box>
+          {/* <Box>
             <TextField
               sx={{
                 marginInline: "2rem",
@@ -69,7 +56,7 @@ const ChatList = () => {
               placeholder="Find User"
               variant="standard"
             />
-          </Box>
+          </Box> */}
           <Box>
             <List
               dense
@@ -82,15 +69,13 @@ const ChatList = () => {
                 },
               }}
             >
-              <ChatItem />
-              {/* {converstations?.map((chat) => {
-                return <ChatItem key={chat._id} chat={chat} />;
-              })} */}
+              {converstations?.map((chat) => {
+                return <ChatItem key={chat._id} chat={chat}/>;
+              })}
             </List>
           </Box>
         </Box>
-      {/* </Card> */}
-    </Box>
+      </Box>
     </WidgetWrapper>
   );
 };

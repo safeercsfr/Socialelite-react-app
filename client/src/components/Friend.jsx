@@ -1,9 +1,13 @@
-
 import { Box, Typography, useTheme, Button } from "@mui/material";
 import { ConfirmToast } from "react-confirm-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFriends, setPosts } from "state/authSlice";
+import {
+  setFollowers,
+  setFollowings,
+  setPosts,
+  setSuggestions,
+} from "state/authSlice";
 import { deleteDataAPI, patchDataAPI } from "utils/fetchData";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
@@ -18,24 +22,97 @@ const Friend = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { _id } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends);
+  const { _id } = useSelector((state) => state?.user);
+  const token = useSelector((state) => state?.token);
+  const followings = useSelector((state) => state?.user?.followings);
+  const followers = useSelector((state) => state?.user?.followers);
 
   const { palette } = useTheme();
-  const main = palette.neutral.main;
-  const medium = palette.neutral.medium;
+  const main = palette?.neutral?.main;
+  const medium = palette?.neutral?.medium;
 
-  const isFriend = friends.find((friend) => friend?._id === friendId);
+  const isFollowing = followings?.find((friend) => friend?._id === friendId);
+  const isFollower = followers?.find((friend) => friend?._id === friendId);
 
-  const patchFriend = async () => {
+  const followFriend = async () => {
     try {
       const { data } = await patchDataAPI(
-        `/users/${_id}/${friendId}`,
+        `/users/${_id}/${friendId}/follow`,
         {},
         token
       );
-      dispatch(setFriends({ friends: data }));
+
+      // const formattedFollowingsData = data.formattedFollowings.map(
+      //   ({ id }) => id
+      // );
+      // const formattedFollowersData = data.formattedFollowers.map(
+      //   ({ id }) => id
+      // );
+
+      // if (isEqual(formattedFollowingsData, formattedFollowersData)) {
+      //   dispatch(setFollowings({ followings: data.formattedFollowings }));
+      //   dispatch(setFollowers({ followers: [] }));
+      //   dispatch(setSuggestions({ suggestions: data.suggestions }));
+
+      // } else {
+      //   dispatch(setFollowings({ followings: data.formattedFollowings }));
+      //   dispatch(setFollowers({ followers: data.formattedFollowers }));
+      //   dispatch(setSuggestions({ suggestions: data.suggestions }));
+
+      // }
+
+      dispatch(setFollowings({ followings: data?.formattedFollowings }));
+      dispatch(setFollowers({ followers: data?.formattedFollowers }));
+      // dispatch(setSuggestions({ suggestions: data.suggestions }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const unFollowFriend = async () => {
+    try {
+      const { data } = await patchDataAPI(
+        `/users/${_id}/${friendId}/unfollow`,
+        {},
+        token
+      );
+
+      // const formattedFollowingsData = data.formattedFollowings.map(
+      //   ({ id }) => id
+      // );
+      // const formattedFollowersData = data.formattedFollowers.map(
+      //   ({ id }) => id
+      // );
+
+      // if (isEqual(formattedFollowingsData, formattedFollowersData)) {
+      //   dispatch(setFollowings({ followings: data.formattedFollowings }));
+      //   dispatch(setFollowers({ followers: [] }));
+      //   dispatch(setSuggestions({ suggestions: data.suggestions }));
+
+      // } else {
+      //   dispatch(setFollowings({ followings: data.formattedFollowings }));
+      //   dispatch(setFollowers({ followers: data.formattedFollowers }));
+      //   dispatch(setSuggestions({ suggestions: data.suggestions }));
+
+      // }
+
+      dispatch(setFollowings({ followings: data?.formattedFollowings }));
+      dispatch(setFollowers({ followers: data?.formattedFollowers }));
+      dispatch(setSuggestions({ suggestions: data?.suggestions }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const followBackFriend = async () => {
+    try {
+      const { data } = await patchDataAPI(
+        `/users/${_id}/${friendId}/followback`,
+        {},
+        token
+      );
+
+      dispatch(setFollowings({ followings: data?.formattedFollowings }));
+      dispatch(setFollowers({ followers: [] }));
+      dispatch(setSuggestions({ suggestions: data?.suggestions }));
     } catch (error) {
       console.log(error);
     }
@@ -61,7 +138,7 @@ const Friend = ({
             fontWeight="500"
             sx={{
               "&:hover": {
-                color: palette.primary.light,
+                color: palette?.primary?.light,
                 cursor: "pointer",
               },
             }}
@@ -84,11 +161,17 @@ const Friend = ({
           showCloseIcon={true}
           theme={"snow"}
         >
-            <Button>Delete</Button>
+          <Button>Delete</Button>
         </ConfirmToast>
       ) : (
-        <Box onClick={() => patchFriend()}>
-          {isFriend ? <Button>Unfollow</Button> : <Button>Follow</Button>}
+        <Box>
+          {isFollowing ? (
+            <Button onClick={() => unFollowFriend()}>Unfollow</Button>
+          ) : isFollower ? (
+            <Button onClick={() => followBackFriend()}>Followback</Button>
+          ) : (
+            <Button onClick={() => followFriend()}>Follow</Button>
+          )}
         </Box>
       )}
     </FlexBetween>

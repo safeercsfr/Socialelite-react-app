@@ -1,6 +1,6 @@
 import { Box } from "@mui/system";
 import { useState } from "react";
-import ProfilePhotoEdit from "scenes/widgets/ProfilePhotoEdit";
+import ProfilePhotoEdit from "scenes/Widgets/ProfilePhotoEdit";
 
 const UserImage = ({ image, size = "60px", isProfile }) => {
   const [isEdit, setIsEdit] = useState(false);

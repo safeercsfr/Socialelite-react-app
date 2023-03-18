@@ -2,7 +2,7 @@ import { TextField, Box, Typography, Grid, useTheme } from "@mui/material";
 import { Button } from "@mui/material";
 import { EditOutlined } from "@mui/icons-material";
 import { useState } from "react";
-import WidgetWrapper from "components/WidgetWrapper";
+import WidgetWrapper from "Components/WidgetWrapper";
 import ChangePasswordWidget from "./ChangePasswordWidge";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsEditing, setUserData } from "state/authSlice";
@@ -12,6 +12,8 @@ import { useParams } from "react-router-dom";
 
 const UserEdit = ({ user, onSave, onCancel }) => {
   const { palette } = useTheme();
+  const dispatch = useDispatch()
+  const { userId } = useParams();
   const dark = palette.neutral.dark;
   const [isPasswordEdit, setIsPasswordEdit] = useState(false);
   const [firstName, setFirstName] = useState(user?.firstName);
@@ -19,9 +21,7 @@ const UserEdit = ({ user, onSave, onCancel }) => {
   const [email, setEmail] = useState(user?.email);
   const [location, setLocation] = useState(user?.location);
   const [occupation, setOccupation] = useState(user?.occupation);
-  const dispatch = useDispatch()
-  const { userId } = useParams();
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state?.token);
 
 
   const handleSave = () => {
@@ -41,7 +41,7 @@ const UserEdit = ({ user, onSave, onCancel }) => {
       dispatch(setUserData({ user: data }));
       dispatch(setIsEditing({ isEditing: false }));
     } catch (err) {
-      toast.error(err.response.data.error, {
+      toast.error(err?.response?.data?.error, {
         position: "bottom-center",
       });
       console.error(err);
@@ -79,10 +79,10 @@ const UserEdit = ({ user, onSave, onCancel }) => {
             alignItems: "center",
             justifyContent: "flex-end",
             mb: "1rem",
-            color: palette.primary.main,
+            color: palette?.primary?.main,
             "&:hover": {
               cursor: "pointer",
-              color: palette.primary.light,
+              color: palette?.primary?.light,
             },
           }}
         >

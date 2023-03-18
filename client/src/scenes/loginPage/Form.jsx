@@ -13,7 +13,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin, setUserData } from "state/authSlice";
 import Dropzone from "react-dropzone";
-import FlexBetween from "components/FlexBetween";
+import FlexBetween from "Components/FlexBetween";
 import { toast, Toaster } from "react-hot-toast";
 import { postDataAPI } from "utils/fetchData";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -90,20 +90,20 @@ const Form = () => {
         setLoading(true);
         formData.append(value, values[value]);
       }
-      formData.append("picturePath", values.picture.name);
+      formData.append("picturePath", values?.picture?.name);
 
       const { data } = await postDataAPI(`/auth/register`, formData);
       const savedUser = data;
       onSubmitProps.resetForm();
       setLoading(false);
       if (savedUser?.status === "Pending") {
-        navigate(`/verify-email/${savedUser.user}`);
+        navigate(`/verify-email/${savedUser?.user}`);
       }
       // if (savedUser) setPageType("login");
     } catch (err) {
       setLoading(false);
-      if (err.response && err.response.data.error) {
-        err.response.data.error.forEach((err) => {
+      if (err.response && err?.response?.data?.error) {
+        err?.response?.data?.error?.forEach((err) => {
           toast.error(err, {
             position: "bottom-center",
           });
@@ -120,19 +120,19 @@ const Form = () => {
       if (loggedIn) {
         dispatch(
           setLogin({
-            token: loggedIn.token,
+            token: loggedIn?.token,
           })
         );
         dispatch(
           setUserData({
-            user: loggedIn.user,
+            user: loggedIn?.user,
           })
         );
         navigate("/home");
       }
     } catch (err) {
       (({ response }) => {
-        toast.error(response.data.msg, {
+        toast.error(response?.data?.msg, {
           position: "bottom-center",
         });
       })(err);
@@ -183,12 +183,12 @@ const Form = () => {
       .then((response) => {
         dispatch(
           setLogin({
-            token: response.data.token,
+            token: response?.data?.token,
           })
         );
         dispatch(
           setUserData({
-            user: response.data.user,
+            user: response?.data?.user,
           })
         );
         navigate("/home");
@@ -196,7 +196,7 @@ const Form = () => {
       .catch((err) => {
         console.log(err);
         ((error) => {
-          toast.error(error.response.data.msg, {
+          toast.error(error?.response?.data?.msg, {
             position: "top-center",
           });
         })(err);
@@ -234,49 +234,49 @@ const Form = () => {
                   label="First Name"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.firstName}
+                  value={values?.firstName}
                   name="firstName"
                   error={
-                    Boolean(touched.firstName) && Boolean(errors.firstName)
+                    Boolean(touched?.firstName) && Boolean(errors?.firstName)
                   }
-                  helperText={touched.firstName && errors.firstName}
+                  helperText={touched?.firstName && errors?.firstName}
                   sx={{ gridColumn: "span 2" }}
                 />
                 <TextField
                   label="Last Name"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.lastName}
+                  value={values?.lastName}
                   name="lastName"
-                  error={Boolean(touched.lastName) && Boolean(errors.lastName)}
-                  helperText={touched.lastName && errors.lastName}
+                  error={Boolean(touched?.lastName) && Boolean(errors?.lastName)}
+                  helperText={touched?.lastName && errors?.lastName}
                   sx={{ gridColumn: "span 2" }}
                 />
                 <TextField
                   label="Location"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.location}
+                  value={values?.location}
                   name="location"
-                  error={Boolean(touched.location) && Boolean(errors.location)}
-                  helperText={touched.location && errors.location}
+                  error={Boolean(touched?.location) && Boolean(errors?.location)}
+                  helperText={touched?.location && errors?.location}
                   sx={{ gridColumn: "span 4" }}
                 />
                 <TextField
                   label="Occupation"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.occupation}
+                  value={values?.occupation}
                   name="occupation"
                   error={
-                    Boolean(touched.occupation) && Boolean(errors.occupation)
+                    Boolean(touched?.occupation) && Boolean(errors?.occupation)
                   }
-                  helperText={touched.occupation && errors.occupation}
+                  helperText={touched?.occupation && errors?.occupation}
                   sx={{ gridColumn: "span 4" }}
                 />
                 <Box
                   gridColumn="span 4"
-                  border={`1px solid ${palette.neutral.medium}`}
+                  border={`1px solid ${palette?.neutral?.medium}`}
                   borderRadius="5px"
                   p="1rem"
                 >
@@ -290,16 +290,16 @@ const Form = () => {
                     {({ getRootProps, getInputProps }) => (
                       <Box
                         {...getRootProps()}
-                        border={`2px dashed ${palette.primary.main}`}
+                        border={`2px dashed ${palette?.primary?.main}`}
                         p="1rem"
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >
                         <input {...getInputProps()} />
-                        {!values.picture ? (
+                        {!values?.picture ? (
                           <p>Add Picture Here</p>
                         ) : (
                           <FlexBetween>
-                            <Typography>{values.picture.name}</Typography>
+                            <Typography>{values?.picture?.name}</Typography>
                             <EditOutlinedIcon />
                           </FlexBetween>
                         )}
@@ -314,10 +314,10 @@ const Form = () => {
               label="Email"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.email}
+              value={values?.email}
               name="email"
-              error={Boolean(touched.email) && Boolean(errors.email)}
-              helperText={touched.email && errors.email}
+              error={Boolean(touched?.email) && Boolean(errors?.email)}
+              helperText={touched?.email && errors?.email}
               sx={{ gridColumn: "span 4" }}
             />
             <TextField
@@ -325,10 +325,10 @@ const Form = () => {
               type="password"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.password}
+              value={values?.password}
               name="password"
-              error={Boolean(touched.password) && Boolean(errors.password)}
-              helperText={touched.password && errors.password}
+              error={Boolean(touched?.password) && Boolean(errors?.password)}
+              helperText={touched?.password && errors?.password}
               sx={{ gridColumn: "span 4" }}
             />
           </Box>
@@ -342,9 +342,9 @@ const Form = () => {
               sx={{
                 m: "2rem 0",
                 p: "1rem",
-                backgroundColor: palette.primary.main,
-                color: palette.background.alt,
-                "&:hover": { color: palette.primary.main },
+                backgroundColor: palette?.primary?.main,
+                color: palette?.background?.alt,
+                "&:hover": { color: palette?.primary?.main },
               }}
             >
               {isLogin ? "LOGIN" : "REGISTER"}
@@ -356,10 +356,10 @@ const Form = () => {
               }}
               sx={{
                 textDecoration: "underline",
-                color: palette.primary.main,
+                color: palette?.primary?.main,
                 "&:hover": {
                   cursor: "pointer",
-                  color: palette.primary.light,
+                  color: palette?.primary?.light,
                 },
               }}
             >
@@ -373,10 +373,10 @@ const Form = () => {
                   sx={{
                     textAlign: "right",
                     textDecoration: "underline",
-                    color: palette.primary.main,
+                    color: palette?.primary?.main,
                     "&:hover": {
                       cursor: "pointer",
-                      color: palette.primary.light,
+                      color: palette?.primary?.light,
                     },
                   }}
                 >

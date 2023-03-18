@@ -1,6 +1,5 @@
 import {
   ChatBubbleOutlineOutlined,
-  // DeleteOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
   ShareOutlined,
@@ -15,9 +14,9 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import FlexBetween from "components/FlexBetween";
-import Friend from "components/Friend";
-import WidgetWrapper from "components/WidgetWrapper";
+import FlexBetween from "Components/FlexBetween";
+import Friend from "Components/Friend";
+import WidgetWrapper from "Components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state/authSlice";
@@ -30,7 +29,6 @@ const PostWidget = ({
   postUserId,
   name,
   description,
-  //location,
   picturePath,
   userPicturePath,
   likes,
@@ -41,15 +39,15 @@ const PostWidget = ({
   const [comment, setComment] = useState("");
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const loggedInUserId = useSelector((state) => state.user._id);
+  const token = useSelector((state) => state?.token);
+  const loggedInUserId = useSelector((state) => state?.user?._id);
   const [isLiked, setIsLiked] = useState(
     Boolean(likes[loggedInUserId])
   );
-  const likeCount = Object.keys(likes).length;
+  const likeCount = Object?.keys(likes)?.length;
   const { palette } = useTheme();
-  const main = palette.neutral.main;
-  const primary = palette.primary.main;
+  const main = palette?.neutral?.main;
+  const primary = palette?.primary?.main;
   const timeago = new TimeAgo()
 
   const validationSchema = Yup.object().shape({
@@ -93,7 +91,7 @@ const PostWidget = ({
       setComment("");
       setErrors({});
     } catch (error) {
-      if (error.name === "ValidationError") {
+      if (error?.name === "ValidationError") {
         const errors = error.inner.reduce(
           (acc, err) => ({
             ...acc,
@@ -147,7 +145,7 @@ const PostWidget = ({
             <IconButton onClick={() => setIsComments(!isComments)}>
               <ChatBubbleOutlineOutlined />
             </IconButton>
-            <Typography>{comments.length}</Typography>
+            <Typography>{comments?.length}</Typography>
           </FlexBetween>
         </FlexBetween>
         <IconButton>
@@ -165,7 +163,7 @@ const PostWidget = ({
               },
             }}
           >
-            {comments.map((comment, i) => (
+            {comments?.map((comment, i) => (
               <Box key={`${i}`}>
                 <Divider />
                 <Typography
@@ -195,10 +193,10 @@ const PostWidget = ({
                       textAlign: "right",
                     }}
                   >
-                    <Typography>{comment.coment}</Typography>
+                    <Typography>{comment?.coment}</Typography>
                     <Box sx={{ textAlign: "end" }}>
                       <Typography component="p" fontSize={10}>
-                      {timeago.format(comment.createdAt) }
+                      {timeago.format(comment?.createdAt) }
                       </Typography>
                     </Box>
                   </Box>
@@ -214,8 +212,8 @@ const PostWidget = ({
                   label="Add comment"
                   value={comment}
                   onChange={handleCommentChange}
-                  error={Boolean(errors.comment)}
-                  helperText={errors.comment}
+                  error={Boolean(errors?.comment)}
+                  helperText={errors?.comment}
                   fullWidth
                   maxRows={1}
                   sx={{

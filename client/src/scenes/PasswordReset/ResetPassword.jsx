@@ -2,7 +2,7 @@ import { useTheme } from "@emotion/react";
 import { EditOutlined } from "@mui/icons-material";
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import WidgetWrapper from "components/WidgetWrapper";
+import WidgetWrapper from "Components/WidgetWrapper";
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -32,7 +32,7 @@ export const ResetPassword = () => {
       }
     } catch (err) {
       if (err.response && err.response.data.error) {
-        err.response.data.error.forEach((err) => {
+        err?.response?.data?.error.forEach((err) => {
           toast.error(err, {
             position: "bottom-center",
           });
@@ -46,7 +46,7 @@ export const ResetPassword = () => {
       <Box>
         <Box
           width="100%"
-          backgroundColor={theme.palette.background.alt}
+          backgroundColor={theme?.palette?.background?.alt}
           p="1rem 6%"
           textAlign="center"
         >

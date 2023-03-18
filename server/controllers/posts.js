@@ -1,6 +1,6 @@
 import Post from "../models/Post.js";
-import cloudinary from "../config/cloudinary.js";
 import User from "../models/User.js";
+import cloudinary from "../config/cloudinary.js";
 import { fetchFindByIdData, fetchFindData } from "../utils/fetchPopulatedData.js";
 
 
@@ -45,7 +45,7 @@ export const getFeedPosts = async (req, res) => {
     const post = await fetchFindData({
       isDelete: false,
       author: {
-        $in: [...user.friends.map((friend) => friend.following), user._id],
+        $in: [...user.followings.map((friend) => friend), user._id],
       },
     });
 

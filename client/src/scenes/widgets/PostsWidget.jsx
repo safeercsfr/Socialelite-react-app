@@ -3,15 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state/authSlice";
 import PostWidget from "./PostWidget";
 import { getDataAPI } from "utils/fetchData";
-import WidgetWrapper from "components/WidgetWrapper";
+import WidgetWrapper from "Components/WidgetWrapper";
 import { CameraAltOutlined } from "@mui/icons-material";
 import { Box } from "@mui/system";
 import { Typography } from "@mui/material";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
-  const posts = useSelector((state) => state.posts);
-  const token = useSelector((state) => state.token);
+  const posts = useSelector((state) => state?.posts);
+  const token = useSelector((state) => state?.token);
   // const _id = useParams();
   // const id = _id.userId;
 
@@ -44,13 +44,12 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   // Only render posts if there are posts to display
   return (
     <>
-      {posts.length > 0 ? (
-        posts.map(
+      {posts?.length > 0 ? (
+        posts?.map(
           ({
             _id,
             author,
             content,
-            //location,
             image,
             likes,
             comments,
@@ -62,7 +61,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
               postUserId={author?._id}
               name={`${author?.firstName} ${author?.lastName}`}
               description={content}
-              //location={location}
               picturePath={image}
               userPicturePath={author?.picturePath}
               likes={likes}
