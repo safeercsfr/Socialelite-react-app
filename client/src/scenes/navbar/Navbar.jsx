@@ -25,7 +25,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state/authSlice";
 import { Link, useNavigate } from "react-router-dom";
-import FlexBetween from "Components/FlexBetween";
+import FlexBetween from "components/FlexBetween";
 import { getDataAPI } from "utils/fetchData";
 
 const Navbar = () => {

@@ -4,7 +4,7 @@ import List from "@mui/material/List";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import ChatItem from "./ChatItem";
-import WidgetWrapper from "Components/WidgetWrapper";
+import WidgetWrapper from "components/WidgetWrapper";
 import axios from "axios";
 
 const ChatList = () => {

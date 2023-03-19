@@ -1,11 +1,11 @@
 import { Avatar, Box, CardHeader, IconButton, OutlinedInput } from "@mui/material";
 import axios from "axios";
-import WidgetWrapper from "Components/WidgetWrapper";
+import WidgetWrapper from "components/WidgetWrapper";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import io from 'socket.io-client';
 import SendRoundedIcon from '@mui/icons-material/SendRounded'
-import Message from "Components/Message";
+import Message from "components/Message";
 
 // IO CONNECTION
 const socket = io.connect("ws://localhost:3002");

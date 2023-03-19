@@ -1,6 +1,6 @@
 import { Box, Typography, useTheme } from "@mui/material";
-import Friend from "Components/Friend";
-import WidgetWrapper from "Components/WidgetWrapper";
+import Friend from "components/Friend";
+import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFollowers, setFollowings, setSuggestions } from "state/authSlice";

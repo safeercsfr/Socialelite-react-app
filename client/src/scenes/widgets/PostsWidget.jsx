@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state/authSlice";
 import PostWidget from "./PostWidget";
 import { getDataAPI } from "utils/fetchData";
-import WidgetWrapper from "Components/WidgetWrapper";
+import WidgetWrapper from "components/WidgetWrapper";
 import { CameraAltOutlined } from "@mui/icons-material";
 import { Box } from "@mui/system";
 import { Typography } from "@mui/material";

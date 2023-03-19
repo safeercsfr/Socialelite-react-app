@@ -1,8 +1,8 @@
 import { useMediaQuery } from "@mui/material";
 import { Box } from "@mui/system";
-import Navbar from "scenes/Navbar/Navbar";
-import ChatBox from "scenes/Widgets/ChatBox";
-import ChatList from "scenes/Widgets/ChatList";
+import Navbar from "scenes/navbar/Navbar";
+import ChatBox from "scenes/widgets/ChatBox";
+import ChatList from "scenes/widgets/ChatList";
 
 const MessagePage = () => {
 

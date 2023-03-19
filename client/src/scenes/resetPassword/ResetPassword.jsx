@@ -2,7 +2,7 @@ import { useTheme } from "@emotion/react";
 import { EditOutlined } from "@mui/icons-material";
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import WidgetWrapper from "Components/WidgetWrapper";
+import WidgetWrapper from "components/WidgetWrapper";
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";

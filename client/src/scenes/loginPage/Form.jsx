@@ -13,7 +13,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin, setUserData } from "state/authSlice";
 import Dropzone from "react-dropzone";
-import FlexBetween from "Components/FlexBetween";
+import FlexBetween from "components/FlexBetween";
 import { toast, Toaster } from "react-hot-toast";
 import { postDataAPI } from "utils/fetchData";
 import LoadingButton from "@mui/lab/LoadingButton";

@@ -14,9 +14,9 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import FlexBetween from "Components/FlexBetween";
-import Friend from "Components/Friend";
-import WidgetWrapper from "Components/WidgetWrapper";
+import FlexBetween from "components/FlexBetween";
+import Friend from "components/Friend";
+import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state/authSlice";

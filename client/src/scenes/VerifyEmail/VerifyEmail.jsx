@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react";
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import WidgetWrapper from "Components/WidgetWrapper";
+import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";

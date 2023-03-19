@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "scenes/HomePage/HomePage";
-import LoginPage from "scenes/LoginPage/LoginPage";
-import ProfilePage from "scenes/ProfilePage/ProfilePage";
+import LoginPage from "scenes/loginPage/LoginPage";
+import ProfilePage from "scenes/profilePage/ProfilePage";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
@@ -11,7 +11,7 @@ import useOnline from "utils/useOnline";
 import ForgotPassword from "scenes/ForgotPassword/ForgotPassword";
 import MessagePage from "scenes/MessagePage/MessagePage";
 import VerifyEmail from "scenes/VerifyEmail/VerifyEmail";
-import ResetPassword from "scenes/PasswordReset/ResetPassword";
+import ResetPassword from "scenes/resetPassword/ResetPassword";
 
 
 function App() {

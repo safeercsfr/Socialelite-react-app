@@ -2,7 +2,7 @@ import { TextField, Box, Typography, Grid, useTheme } from "@mui/material";
 import { Button } from "@mui/material";
 import { EditOutlined } from "@mui/icons-material";
 import { useState } from "react";
-import WidgetWrapper from "Components/WidgetWrapper";
+import WidgetWrapper from "components/WidgetWrapper";
 import ChangePasswordWidget from "./ChangePasswordWidge";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsEditing, setUserData } from "state/authSlice";
