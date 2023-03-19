@@ -11,7 +11,7 @@ import useOnline from "utils/useOnline";
 import ForgotPassword from "scenes/ForgotPassword/ForgotPassword";
 import MessagePage from "scenes/MessagePage/MessagePage";
 import VerifyEmail from "scenes/VerifyEmail/VerifyEmail";
-import ResetPassword from "scenes/ResetPassword/ResetPassword";
+import ResetPassword from "scenes/resetPassword/ResetPassword";
 
 
 function App() {
