@@ -28,6 +28,10 @@ const ChatBox = () => {
   const { palette } = useTheme();
   const id = useSelector((state) => state?.ids?.chatId);
   const friendId = useSelector((state) => state?.ids?.friendId);
+  let messages1 = []
+  if(messages){
+    messages1=messages
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,7 +58,7 @@ const ChatBox = () => {
         }
       );
 
-      setMessages([...messages, res.data]);
+      setMessages([...messages1, res.data]);
       setNewMessage("");
     } catch (error) {
       console.error(error);
@@ -125,7 +129,7 @@ const ChatBox = () => {
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages1]);
 
   return (
     <WidgetWrapper>
@@ -159,8 +163,8 @@ const ChatBox = () => {
             }}
           >
             <Box>
-              {messages &&
-                messages.map((msg, index) => {
+              {messages1 &&
+                messages1?.map((msg, index) => {
                   return (
                     <Box ref={scrollRef} key={index}>
                       <Message msg={msg} />

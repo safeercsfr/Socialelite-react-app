@@ -24,8 +24,6 @@ const FriendListWidget = ({ userId, isSuggestion }) => {
     followings1=followings
   }
 
-  console.log(followings,'---------',followers);
-
   const getFriends = async () => {
     try {
       // CALLING FOLLOWING LIST
