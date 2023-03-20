@@ -192,7 +192,6 @@ export const updateProPic = async (req, res) => {
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: "ProfileImage",
     });
-    console.log(result, "lll");
     const picturePath = result.secure_url;
     const { id } = req.user;
     const updatedUser = await User.findByIdAndUpdate(
@@ -200,7 +199,6 @@ export const updateProPic = async (req, res) => {
       { picturePath },
       { new: true }
     );
-    console.log(updatedUser, "updatedUser");
     res.status(201).json(updatedUser);
   } catch (err) {
     res.status(500).json({ error: "Error Occured" });
@@ -336,7 +334,6 @@ export const googleLogin = async (req, res) => {
   try {
     const { token } = req.body;
     const data = await verify(CLIENT_ID, token);
-    console.log(data);
     const { name, email, picture } = await verify(
       CLIENT_ID,
       token

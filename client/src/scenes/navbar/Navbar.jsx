@@ -47,11 +47,6 @@ const Navbar = () => {
   const alt = theme.palette?.background?.alt;
 
   const fullName = `${user ? user?.username : "username"}`;
-
-  const handleMessage = () => {
-    navigate("/message");
-  };
-
   const getAllUsers = async () => {
     const { data } = await getDataAPI("/users", token);
     setUsers(data);
@@ -183,10 +178,10 @@ const Navbar = () => {
             )}
           </IconButton>
           <Message
-            onClick={handleMessage}
+            onClick={()=>navigate("/message")}
             sx={{ fontSize: "25px", cursor: "pointer" }}
           />
-          <Notifications sx={{ fontSize: "25px" }} />
+          <Notifications onClick={()=> navigate('/notifications')} sx={{ fontSize: "25px",cursor:"pointer" }} />
           <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard" value={fullName}>
             <Select
@@ -266,7 +261,7 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: "25px" }} onClick={handleMessage} />
+            <Message sx={{ fontSize: "25px" }} onClick={()=>navigate("/message")} />
             <Notifications sx={{ fontSize: "25px" }} />
             <Help sx={{ fontSize: "25px" }} />
             <FormControl variant="standard" value={fullName}>

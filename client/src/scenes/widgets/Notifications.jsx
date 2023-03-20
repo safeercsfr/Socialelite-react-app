@@ -1,30 +1,27 @@
-import { Card, Divider, Typography } from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import axios from "axios";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { getDataAPI } from "utils/fetchData";
 import NotificationItem from "./NotificationItem";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state?.token);
+  const userId = useSelector((state) => state?.user?._id);
 
   const getNotifications = async () => {
     try {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/users/notifications`,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const { data } = await getDataAPI(
+        `/users/${userId}/notifications`,
+        token
       );
 
       setNotifications(data);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -38,7 +35,7 @@ const Notifications = () => {
         <Box
           sx={{
             height: "80vh",
-            width: "98%",
+            width: "100%",
             border: "none",
           }}
         >

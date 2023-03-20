@@ -42,29 +42,8 @@ const Friend = ({
         {},
         token
       );
-
-      // const formattedFollowingsData = data.formattedFollowings.map(
-      //   ({ id }) => id
-      // );
-      // const formattedFollowersData = data.formattedFollowers.map(
-      //   ({ id }) => id
-      // );
-
-      // if (isEqual(formattedFollowingsData, formattedFollowersData)) {
-      //   dispatch(setFollowings({ followings: data.formattedFollowings }));
-      //   dispatch(setFollowers({ followers: [] }));
-      //   dispatch(setSuggestions({ suggestions: data.suggestions }));
-
-      // } else {
-      //   dispatch(setFollowings({ followings: data.formattedFollowings }));
-      //   dispatch(setFollowers({ followers: data.formattedFollowers }));
-      //   dispatch(setSuggestions({ suggestions: data.suggestions }));
-
-      // }
-
       dispatch(setFollowings({ followings: data?.formattedFollowings }));
       dispatch(setFollowers({ followers: data?.formattedFollowers }));
-
       // dispatch(setSuggestions({ suggestions: data.suggestions }));
     } catch (error) {
       console.log(error);
@@ -168,7 +147,7 @@ const Friend = ({
       ) : (
         <Box>
           {isFollowing ? (
-            <Button onClick={() => unFollowFriend()}>Unfollow</Button>
+            <Button onClick={() => unFollowFriend()}>Following</Button>
           ) : isFollower ? (
             <Button onClick={() => followBackFriend()}>Followback</Button>
           ) : (

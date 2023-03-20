@@ -11,8 +11,6 @@ export const createConverstation = async (req, res) => {
         });
 
         if (existingConvo) {
-        console.log(existingConvo,'lllll');
-
             return res.status(200).json(existingConvo);
         }
 

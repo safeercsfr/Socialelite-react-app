@@ -27,7 +27,7 @@ const Notification = () => {
         </Box>
         
           <Box
-            flexBasis={isNonMobileScreens ? "42%" : undefined}
+            flexBasis={isNonMobileScreens ? "50%" : undefined}
             mt={isNonMobileScreens ? undefined : "2rem"}
           >
             <Notifications/>

@@ -66,13 +66,13 @@ export const getSuggestionUsers = async (req, res) => {
 
 export const getNotifications = async (req, res) => {
   try {
-    const { id } = req.user;
-    const notifiactions = await Notification.find({ user: id })
+    const { id } = req.params;
+    const notifications = await Notification.find({ user: id })
       .populate("friend", "username picturePath")
-      .populate("postId", "image")
+      .populate("postId", "image content")
       .sort({ createdAt: -1 })
       .exec();
-    res.status(200).json(notifiactions);
+    res.status(200).json(notifications);
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
@@ -113,7 +113,6 @@ export const getUserFriends = async (req, res) => {
 export const followFriend = async (req, res) => {
   try {
     const { id, friendId } = req.params;
-    console.log(req.params);
     const user = await User.findById(id);
 
     const friend = await User.findById(friendId);
@@ -131,8 +130,6 @@ export const followFriend = async (req, res) => {
       });
       await notification.save();
     }
-    console.log("HI");
-
     if (!user) {
       return res.status(400).json({ msg: "User does not exist" });
     }
@@ -140,7 +137,6 @@ export const followFriend = async (req, res) => {
       user.followings.push(friendId);
       await user.save();
     }
-    console.log("HI3");
 
     const F1 = await Promise.all(
       user.followings.map((id) => User.findById(id))
@@ -152,8 +148,6 @@ export const followFriend = async (req, res) => {
     );
 
     const F2 = await Promise.all(user.followers.map((id) => User.findById(id)));
-    console.log("HI 2");
-
     const formattedFollowers = F2.map(
       ({ _id, username, name, picturePath }) => {
         return { _id, username, name, picturePath };
@@ -163,7 +157,6 @@ export const followFriend = async (req, res) => {
     // const currentUser = await User.findById(id);
     // const following = currentUser.followings.map((friend) => friend);
     // const suggestions = await User.find({ _id: { $nin: [...following, id] } });
-    // console.log(suggestions,'lllllllll');
     console.log("HI 1");
 
     const updatedUser = await User.findById(id);
