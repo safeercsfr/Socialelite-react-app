@@ -10,6 +10,7 @@ import {
   followBackFriend,
   updateUser,
   getSuggestionUsers,
+  getNotifications,
 } from "../controllers/users.js";
 import { verifyToken } from "../middlleware/auth.js";
 
@@ -19,6 +20,7 @@ router.get("/:id", verifyToken, getUser);
 router.get("/:id/followers", verifyToken, getUserFollowers);
 router.get("/:id/followings", verifyToken, getUserFriends);
 router.get("/:id/suggestions", verifyToken, getSuggestionUsers);
+router.get("/notifications", verifyToken, getNotifications);
 
 /*UPDATE USER */
 router.put("/:id", verifyToken, updateUser);

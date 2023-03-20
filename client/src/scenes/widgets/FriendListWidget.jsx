@@ -15,6 +15,16 @@ const FriendListWidget = ({ userId, isSuggestion }) => {
   const followers = useSelector((state) => state?.user?.followers);
   const token = useSelector((state) => state?.token);
   const suggestions = useSelector((state) => state?.suggestions);
+  let followers1 = []
+  let followings1 = []
+  if(followers){
+    followers1=followers
+  }
+  if(followings){
+    followings1=followings
+  }
+
+  console.log(followings,'---------',followers);
 
   const getFriends = async () => {
     try {
@@ -74,12 +84,12 @@ const FriendListWidget = ({ userId, isSuggestion }) => {
               />
             ))
           )
-        ) : followings?.length === 0 ? (
+        ) : followings1?.length === 0 ? (
           <Typography color={medium} m="0.5rem 0">
             You are following no one yet.
           </Typography>
         ) : (
-          [...followers, ...followings]?.map((friend, I) => (
+          [...followers1, ...followings1]?.map((friend, I) => (
             <Friend
               key={friend?._id + I}
               friendId={friend?._id}

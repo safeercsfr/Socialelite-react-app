@@ -31,7 +31,7 @@ const schema = yup.object().shape({
   bio: yup
     .string()
     .trim()
-    .matches(/^[^#<>@/\"$%^&*()!+=:;{}[\]`\\|~]+$/, {
+    .matches(/^[^#<>@/"$%^&*()!+=:;{}[\]`\\|~]+$/, {
       message:
         "Invalid characters in bio. Bio cannot contain hashtags, links, or special characters.",
       excludeEmptyString: true,

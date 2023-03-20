@@ -23,7 +23,7 @@ const Friend = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { _id } = useSelector((state) => state?.user);
+  const _id  = useSelector((state) => state?.user?._id);
   const token = useSelector((state) => state?.token);
   const followings = useSelector((state) => state?.user?.followings);
   const followers = useSelector((state) => state?.user?.followers);
@@ -64,7 +64,6 @@ const Friend = ({
 
       dispatch(setFollowings({ followings: data?.formattedFollowings }));
       dispatch(setFollowers({ followers: data?.formattedFollowers }));
-      dispatch(setUserData({ followers: data?.updatedU }));
 
       // dispatch(setSuggestions({ suggestions: data.suggestions }));
     } catch (error) {

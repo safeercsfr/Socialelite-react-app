@@ -13,6 +13,7 @@ import MessagePage from "scenes/MessagePage/MessagePage";
 import VerifyEmail from "scenes/VerifyEmail/VerifyEmail";
 import ResetPassword from "scenes/resetPassword/ResetPassword";
 import ErrorPage from "scenes/ErrorPage/ErrorPage";
+import Notification from "scenes/Notification/Notification"
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
               element={<MessagePage />}
             />
             <Route path='/verify-email/:id' element={ <VerifyEmail/>}/>
+            <Route path="/notifications" element={<Notification />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </ThemeProvider>
