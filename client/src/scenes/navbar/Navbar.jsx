@@ -46,9 +46,7 @@ const Navbar = () => {
   const primaryLight = theme?.palette?.primary?.light;
   const alt = theme.palette?.background?.alt;
 
-  const fullName = `${user ? user?.firstName : "user"} ${
-    user ? user?.lastName : "name"
-  }`;
+  const fullName = `${user ? user?.username : "username"}`;
 
   const handleMessage = () => {
     navigate("/message");
@@ -129,8 +127,7 @@ const Navbar = () => {
                 {users?.length > 0 ? (
                   <Box>
                     {users.map((user1) =>
-                      user1?.firstName.toLowerCase().includes(search) |
-                        user1?.lastName.toLowerCase().includes(search) &&
+                      user1?.username.toLowerCase().includes(search) &&
                       user._id !== user1?.id ? (
                         <Link
                           key={user1?._id}
@@ -158,7 +155,7 @@ const Navbar = () => {
                                 variant="subtitle2"
                                 color={dark}
                               >
-                                {user1?.firstName} {user1?.lastName}
+                                {user1?.username}
                               </Typography>
                             </Box>
                           </Box>

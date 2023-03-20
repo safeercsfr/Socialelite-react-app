@@ -12,8 +12,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state?.posts);
   const token = useSelector((state) => state?.token);
-  // const _id = useParams();
-  // const id = _id.userId;
 
   const getPosts = async () => {
     try {
@@ -59,7 +57,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
               key={_id}
               postId={_id}
               postUserId={author?._id}
-              name={`${author?.firstName} ${author?.lastName}`}
+              name={author?.username}
               description={content}
               picturePath={image}
               userPicturePath={author?.picturePath}

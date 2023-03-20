@@ -1,9 +1,4 @@
-import {
-  ManageAccountsOutlined,
-  EditOutlined,
-  LocationOnOutlined,
-  WorkOutlineOutlined,
-} from "@mui/icons-material";
+import { ManageAccountsOutlined } from "@mui/icons-material";
 import { Box, Typography, Divider, useTheme, Button } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
@@ -31,28 +26,27 @@ const UserWidget = ({
   const medium = palette?.neutral?.medium;
   const main = palette?.neutral?.main;
   const dispatch = useDispatch();
-  const {userId:friendId} = useParams()
-  
+  const { userId: friendId } = useParams();
+
   const followings = useSelector((state) => state?.user?.followings);
-  const [isFriend,setIsFriend] = useState(followings?.find((friend) => friend?._id === friendId))
-  // console.log(friendId,'kk');
+  const [isFriend, setIsFriend] = useState(
+    followings?.find((friend) => friend?._id === friendId)
+  );
 
   const patchFriend = async () => {
     try {
-      console.log(friendId,'inside');
       const { data } = await patchDataAPI(
         `/users/${user?._id}/${friendId}`,
         {},
         token
       );
       // dispatch(setFriends({ friends: data }));
-      setIsFriend(!isFriend)
+      setIsFriend(!isFriend);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
- 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,15 +73,9 @@ const UserWidget = ({
   if (!user) {
     return null;
   }
-  const {
-    firstName,
-    lastName,
-    location,
-    occupation,
-  } = user;
+  const { username, name, bio } = user;
   return (
-    <WidgetWrapper
-    >
+    <WidgetWrapper>
       {/* FIRST ROW */}
       <FlexBetween
         gap="0.5rem"
@@ -111,12 +99,15 @@ const UserWidget = ({
                 },
               }}
             >
-              {isFriendData ? friendData?.user?.firstName : firstName}{" "}
-              {isFriendData ? friendData?.user?.lastName : lastName}
+              {isFriendData ? friendData?.user?.username : username}
             </Typography>
             {isFriendData && (
-              <Box >
-                {isFriend ? <Button onClick={() => patchFriend()}>Unfollow</Button> : <Button onClick={() => patchFriend()}>Follow</Button>}
+              <Box>
+                {isFriend ? (
+                  <Button onClick={() => patchFriend()}>Unfollow</Button>
+                ) : (
+                  <Button onClick={() => patchFriend()}>Follow</Button>
+                )}
               </Box>
             )}
           </Box>
@@ -130,88 +121,64 @@ const UserWidget = ({
       </FlexBetween>
       <Divider />
       {/* SECOND ROW */}
-      <Box p="1rem 0">
-        <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
-          <LocationOnOutlined fontSize="large" sx={{ color: main }} />
-          <Typography color={medium}>
-            {isFriendData ? friendData?.user?.location : location}
-          </Typography>
-        </Box>
-        <Box display="flex" alignItems="center" gap="1rem">
-          <WorkOutlineOutlined fontSize="large" sx={{ color: main }} />
-          <Typography color={medium}>
-            {isFriendData ? friendData?.user?.occupation : occupation}
-          </Typography>
-        </Box>
-      </Box>
-      <Divider />
+      {isFriendData
+        ? friendData?.user?.name
+        : name && (
+            <>
+              {" "}
+              <Box p="1rem 0">
+                <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
+                  <Typography color={main} fontWeight="500">
+                    {isFriendData ? friendData?.user?.name : name}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" gap="1rem">
+                  <Typography color={medium}>
+                    {(isFriendData ? friendData?.user?.bio : bio)
+                      ?.split("\n")
+                      ?.map((line, index) => (
+                        <Box key={index}>
+                          {line}
+                          <br />
+                        </Box>
+                      ))}
+                  </Typography>
+                </Box>
+              </Box>
+              <Divider />
+            </>
+          )}
 
       {/* THIRD ROW */}
       <Box p="1rem 0">
-        <FlexBetween mb="0.5rem">
-          <Typography color={medium}>Following</Typography>
+        <FlexBetween gap="1rem" mb="0.5rem">
+          <FlexBetween gap="1rem">
+            <Box>
+              <Typography color={main} fontWeight="500">
+                Following
+              </Typography>
+            </Box>
+          </FlexBetween>
           <Typography color={main} fontWeight="500">
             {isFriendData
               ? friendData?.followingCount
               : followers?.followingCount}
           </Typography>
         </FlexBetween>
-        <FlexBetween>
-          <Typography color={medium}>Followers</Typography>
+
+        <FlexBetween gap="1rem">
+          <FlexBetween gap="1rem">
+            <Box>
+              <Typography color={main} fontWeight="500">
+                Followers
+              </Typography>
+            </Box>
+          </FlexBetween>
           <Typography color={main} fontWeight="500">
             {isFriendData
               ? friendData?.followersCount
               : followers?.followersCount}
           </Typography>
-        </FlexBetween>
-      </Box>
-      {/* <Box p="1rem 0">
-        <FlexBetween mb="0.5rem">
-          <Typography color={medium}>Who's viewed your profile</Typography>
-          <Typography color={main} fontWeight="500">
-            {isFriendData ? friendData?.viewProfile : viewProfile}
-          </Typography>
-        </FlexBetween>
-        <FlexBetween>
-          <Typography color={medium}>Impressions of your post</Typography>
-          <Typography color={main} fontWeight="500">
-            {isFriendData ? friendData?.impressions : impressions}
-          </Typography>
-        </FlexBetween>
-      </Box> */}
-
-      <Divider />
-
-      {/* FOURTH ROW */}
-      <Box p="1rem 0">
-        <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
-          Social Profiles
-        </Typography>
-
-        <FlexBetween gap="1rem" mb="0.5rem">
-          <FlexBetween gap="1rem">
-            <img src="../assets/linkedin.png" alt="linkedin" />
-            <Box>
-              <Typography color={main} fontWeight="500">
-                Linkedin
-              </Typography>
-              <Typography color={medium}>Network Platform</Typography>
-            </Box>
-          </FlexBetween>
-          <EditOutlined sx={{ color: main }} />
-        </FlexBetween>
-
-        <FlexBetween gap="1rem">
-          <FlexBetween gap="1rem">
-            <img src="../assets/twitter.png" alt="twitter" />
-            <Box>
-              <Typography color={main} fontWeight="500">
-                Twitter
-              </Typography>
-              <Typography color={medium}>Social Network</Typography>
-            </Box>
-          </FlexBetween>
-          <EditOutlined sx={{ color: main }} />
         </FlexBetween>
       </Box>
     </WidgetWrapper>

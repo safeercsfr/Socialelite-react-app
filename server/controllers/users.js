@@ -70,16 +70,16 @@ export const getUserFriends = async (req, res) => {
       user.followings.map((id) => User.findById(id))
     );
     const formattedFollowings = F1.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
-        return { _id, firstName, lastName, occupation, location, picturePath };
+      ({ _id, username, name, picturePath }) => {
+        return { _id, username, name, picturePath };
       }
     );
     const F2 = await Promise.all(
       user.followers.map((id) => User.findById(id))
     );
     const formattedFollowers = F2.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
-        return { _id, firstName, lastName, occupation, location, picturePath };
+      ({ _id, username, name, picturePath }) => {
+        return { _id, username, name, picturePath };
       }
     );
     const currentUser = await User.findById(id);
@@ -119,8 +119,8 @@ export const followFriend = async (req, res) => {
       user.followings.map((id) => User.findById(id))
       );
     const formattedFollowings = F1.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
-        return { _id, firstName, lastName, occupation, location, picturePath };
+      ({ _id, username, name,picturePath }) => {
+        return { _id, username,name, picturePath };
       }
     );
 
@@ -129,8 +129,8 @@ export const followFriend = async (req, res) => {
     );
 
     const formattedFollowers = F2.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
-        return { _id, firstName, lastName, occupation, location, picturePath };
+      ({ _id, username, name, picturePath }) => {
+        return { _id, username,  name,  picturePath };
       }
     );
 
@@ -139,7 +139,10 @@ export const followFriend = async (req, res) => {
     const suggestions = await User.find({ _id: { $nin: [...following, id] } });
     console.log(suggestions,'lllllllll');
 
-    res.status(200).json({formattedFollowings,formattedFollowers});
+    const updatedUser = await User.findById(id);
+
+
+    res.status(200).json({formattedFollowings,formattedFollowers,updatedUser});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -173,23 +176,26 @@ export const unFollowFriend = async (req, res) => {
       user.followings.map((id) => User.findById(id))
     );
     const formattedFollowings = F1.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
-        return { _id, firstName, lastName, occupation, location, picturePath };
+      ({ _id, username,name, picturePath }) => {
+        return { _id, username,  name, picturePath };
       }
     );
     const F2 = await Promise.all(
       user.followers.map((id) => User.findById(id))
     );
     const formattedFollowers = F2.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
-        return { _id, firstName, lastName, occupation, location, picturePath };
+      ({ _id, username,  name, picturePath }) => {
+        return { _id, username,  name,  picturePath };
       }
     );
     const currentUser = await User.findById(id);
     const following = currentUser.followings.map((friend) => friend);
     const suggestions = await User.find({ _id: { $nin: [...following, id] } });
 
-    res.status(200).json({formattedFollowings,formattedFollowers,suggestions});
+    const updatedUser = await User.findById(id);
+
+
+    res.status(200).json({formattedFollowings,formattedFollowers,suggestions,updatedUser});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -221,39 +227,38 @@ export const followBackFriend = async (req, res) => {
       user.followings.map((id) => User.findById(id))
     );
     const formattedFollowings = F1.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
-        return { _id, firstName, lastName, occupation, location, picturePath };
+      ({ _id, username,  name,  picturePath }) => {
+        return { _id, username, name,picturePath };
       }
     );
     const F2 = await Promise.all(
       user.followers.map((id) => User.findById(id))
     );
     const formattedFollowers = F2.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => {
-        return { _id, firstName, lastName, occupation, location, picturePath };
+      ({ _id, username,  name, picturePath }) => {
+        return { _id, username,  name,  picturePath };
       }
     );
     const currentUser = await User.findById(id);
     const following = currentUser.followings.map((friend) => friend);
     const suggestions = await User.find({ _id: { $nin: [...following, id] } });
 
-    res.status(200).json({formattedFollowings,formattedFollowers,suggestions});
+    const updatedUser = await User.findById(id);
+
+    res.status(200).json({formattedFollowings,formattedFollowers,suggestions,updatedUser});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-
-
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      firstName,
-      lastName,
+      name,
+      username,
       email,
-      location,
-      occupation,
+      bio,
       oldPassword,
       newPassword,
       confirmPassword,
@@ -261,11 +266,10 @@ export const updateUser = async (req, res) => {
 
     let user = await User.findById(id);
     if (user) {
-      user.firstName = firstName || user.firstName;
-      user.lastName = lastName || user.lastName;
-      user.email = email || user.email;
-      user.location = location || user.location;
-      user.occupation = occupation || user.occupation;
+      user.username = username.trim() || user.username;
+      user.name = name.trim() || user.name;
+      user.bio = bio.trim() || user.bio;
+      user.email = email.trim() || user.email;
       if (oldPassword) {
         const isMatch = await bcrypt.compare(oldPassword, user.password);
         if (!isMatch)
@@ -286,6 +290,6 @@ export const updateUser = async (req, res) => {
       res.status(200).json(updatedUser);
     }
   } catch (err) {
-    res.status(404).json({ error: "Email Already Exists!" });
+    res.status(404).json({ error: "Email or Username Already Exists!" });
   }
 };

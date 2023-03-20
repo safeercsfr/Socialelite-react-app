@@ -1,17 +1,18 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import HomePage from "scenes/HomePage/HomePage";
-import LoginPage from "scenes/loginPage/LoginPage";
-import ProfilePage from "scenes/profilePage/ProfilePage";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
 import useOnline from "utils/useOnline";
+import HomePage from "scenes/HomePage/HomePage";
+import LoginPage from "scenes/loginPage/LoginPage";
+import ProfilePage from "scenes/profilePage/ProfilePage";
 import ForgotPassword from "scenes/ForgotPassword/ForgotPassword";
 import MessagePage from "scenes/MessagePage/MessagePage";
 import VerifyEmail from "scenes/VerifyEmail/VerifyEmail";
 import ResetPassword from "scenes/resetPassword/ResetPassword";
+import ErrorPage from "scenes/ErrorPage/ErrorPage";
 
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
               element={<MessagePage />}
             />
             <Route path='/verify-email/:id' element={ <VerifyEmail/>}/>
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>

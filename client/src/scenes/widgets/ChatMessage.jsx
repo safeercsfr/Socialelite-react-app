@@ -36,29 +36,6 @@ const ChatMessage = ({ msg }) => {
           {msg?.text}
         </Typography>
       </Box>
-      {/* <Card sx={{
-              width: "75%",
-              marginTop: "1rem"
-            }}>
-              <CardMedia
-                component='img'
-                image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRq0W2Devh5khkgIF3t-2T2zCm95r71Bc9n1g&usqp=CAU"
-              />
-              <CardContent sx={{
-          ...(msg.sender === userId && {
-                  backgroundColor: "#b1c9ad",
-                }),
-          ...(msg.sender !== userId && {
-                  backgroundColor: "white",
-                }),
-              }}>
-                <Typography variant="body2" color="text.secondary">
-                  This impressive paella is a perfect party dish and a fun meal to cook
-                  together with your guests. Add 1 cup of frozen peas along with the mussels,
-                  if you like.
-                </Typography>
-              </CardContent>
-            </Card> */}
     </Box>
   );
 };

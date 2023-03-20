@@ -180,9 +180,7 @@ const PostWidget = ({
                     src={comment?.author?.picturePath}
                   />
                   <strong>
-                    {comment?.author?.firstName +
-                      " " +
-                      comment?.author?.lastName}{" "}
+                    {comment?.author?.username}{" "}
                   </strong>
                   <Box
                     sx={{

@@ -7,6 +7,7 @@ import {
   setFollowings,
   setPosts,
   setSuggestions,
+  setUserData,
 } from "state/authSlice";
 import { deleteDataAPI, patchDataAPI } from "utils/fetchData";
 import FlexBetween from "./FlexBetween";
@@ -63,6 +64,8 @@ const Friend = ({
 
       dispatch(setFollowings({ followings: data?.formattedFollowings }));
       dispatch(setFollowers({ followers: data?.formattedFollowers }));
+      dispatch(setUserData({ followers: data?.updatedU }));
+
       // dispatch(setSuggestions({ suggestions: data.suggestions }));
     } catch (error) {
       console.log(error);

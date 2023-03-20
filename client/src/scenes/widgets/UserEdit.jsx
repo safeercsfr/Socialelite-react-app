@@ -9,30 +9,73 @@ import { setIsEditing, setUserData } from "state/authSlice";
 import { putDataAPI } from "utils/fetchData";
 import { toast, Toaster } from "react-hot-toast";
 import { useParams } from "react-router-dom";
+import * as yup from "yup";
+
+const schema = yup.object().shape({
+  username: yup
+    .string()
+    .matches(
+      /^[a-z0-9_.]+$/,
+      "Username must contain only small letters, underscores, dots, and numbers."
+    )
+    .required("Username is required."),
+  email: yup
+    .string()
+    .email("Invalid email address.")
+    .required("Email is required."),
+  name: yup
+    .string()
+    .required("Name is required.")
+    .min(1, "Name must be at least 1 character long.")
+    .max(50, "Name cannot be longer than 50 characters."),
+  bio: yup
+    .string()
+    .trim()
+    .matches(/^[^#<>@/\"$%^&*()!+=:;{}[\]`\\|~]+$/, {
+      message:
+        "Invalid characters in bio. Bio cannot contain hashtags, links, or special characters.",
+      excludeEmptyString: true,
+    })
+    .max(150, "Bio cannot be longer than 150 characters."),
+});
 
 const UserEdit = ({ user, onSave, onCancel }) => {
   const { palette } = useTheme();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { userId } = useParams();
   const dark = palette.neutral.dark;
   const [isPasswordEdit, setIsPasswordEdit] = useState(false);
-  const [firstName, setFirstName] = useState(user?.firstName);
-  const [lastName, setLastName] = useState(user?.lastName);
+  const [username, setUsername] = useState(user?.username);
+  const [name, setName] = useState(user?.name);
   const [email, setEmail] = useState(user?.email);
-  const [location, setLocation] = useState(user?.location);
-  const [occupation, setOccupation] = useState(user?.occupation);
+  const [bio, setBio] = useState(user?.bio);
   const token = useSelector((state) => state?.token);
-
-
+  const [formErrors, setFormErrors] = useState({
+    username: "",
+    email: "",
+    name: "",
+    bio: "",
+  });
   const handleSave = () => {
-    onSave({
-      ...user,
-      firstName,
-      lastName,
-      email,
-      location,
-      occupation,
-    });
+    const formData = { username, name, email, bio };
+    schema
+      .validate(formData, { abortEarly: false })
+      .then(() => {
+        onSave({
+          ...user,
+          username,
+          name,
+          bio,
+          email,
+        });
+      })
+      .catch((err) => {
+        const errors = {};
+        err.inner.forEach((e) => {
+          errors[e.path] = e.message;
+        });
+        setFormErrors(errors);
+      });
   };
 
   const onPasswordSave = async (userDetails) => {
@@ -60,7 +103,7 @@ const UserEdit = ({ user, onSave, onCancel }) => {
     />
   ) : (
     <WidgetWrapper>
-      <Toaster/>
+      <Toaster />
       <Box p="1rem">
         <Typography
           variant="h4"
@@ -72,6 +115,7 @@ const UserEdit = ({ user, onSave, onCancel }) => {
           <EditOutlined sx={{ mr: "0.5rem" }} />
           Edit profile
         </Typography>
+        {/* PASSWORD CHANGE BUTTON  */}
         <Box
           onClick={handleTextClick}
           sx={{
@@ -92,17 +136,11 @@ const UserEdit = ({ user, onSave, onCancel }) => {
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              label="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              label="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              error={Boolean(formErrors.username)}
+              helperText={formErrors.username}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -111,22 +149,29 @@ const UserEdit = ({ user, onSave, onCancel }) => {
               label="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              error={Boolean(formErrors.email)}
+              helperText={formErrors.email}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              error={Boolean(formErrors.name)}
+              helperText={formErrors.name}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Occupation"
-              value={occupation}
-              onChange={(e) => setOccupation(e.target.value)}
+              multiline
+              label="Bio"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              error={Boolean(formErrors.bio)}
+              helperText={formErrors.bio}
             />
           </Grid>
         </Grid>

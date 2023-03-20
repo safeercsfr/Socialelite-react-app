@@ -8,7 +8,7 @@ const AdvertWidget = () => {
   const dark = palette.neutral.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
-  const imagePath = `${process.env.REACT_APP_BASE_URL}/assets/info4.jpeg`
+  const imagePath = `https://res.cloudinary.com/dfskmzgax/image/upload/v1679225899/Posts/jvfnp06b1legjslhtu3i.jpg`
 
   return (
     <WidgetWrapper>

@@ -21,8 +21,13 @@ import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
 const registerSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
+  username: yup
+    .string()
+    .matches(
+      /^[a-z0-9_.]+$/,
+      "Username can only contain lowercase letters, underscores, dots, and numbers"
+    )
+    .required("Username is required"),
   email: yup.string().email("invalid email").required("required"),
   password: yup
     .string()
@@ -36,40 +41,40 @@ const registerSchema = yup.object().shape({
       /[!@#$%^&*(),.?":{}|<>]/,
       "Password must contain at least one special character"
     ),
-
-  location: yup.string().required("required"),
-  occupation: yup.string().required("required"),
   picture: yup.string().required("required"),
 });
 
 const loginSchema = yup.object().shape({
-  email: yup.string().email("invalid email").required("required"),
+  emailOrUsername: yup
+    .string()
+    .test(
+      "email-or-username",
+      "Please enter a valid email or username",
+      function (value) {
+        const isEmail = yup.string().email().isValidSync(value);
+        const isUsername = /^[a-z0-9_.]+$/.test(value);
+        return isEmail || isUsername;
+      }
+    )
+    .required("Email or username is required"),
   password: yup
     .string()
-    .required("required")
-    .min(8, "Password must be at least 8 characters long")
-    .max(20, "Password must be at most 20 characters long")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .matches(/[0-9]/, "Password must contain at least one number")
+    .required("Password is required")
     .matches(
-      /[!@#$%^&*(),.?":{}|<>]/,
-      "Password must contain at least one special character"
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+      "Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long"
     ),
 });
 
 const initialValuesRegister = {
-  firstName: "",
-  lastName: "",
+  username: "",
   email: "",
   password: "",
-  location: "",
-  occupation: "",
   picture: "",
 };
 
 const initialValuesLogin = {
-  email: "",
+  emailOrUsername: "",
   password: "",
 };
 
@@ -144,36 +149,6 @@ const Form = () => {
     if (isRegister) await register(values, onSubmitProps);
   };
 
-  // const handleGoogleLogin = async (response) => {
-  //   const token =response.credential
-  //   console.log(token);
-  //   try {
-  //     const { data } = await postDataAPI(
-  //       `/auth/google-login`,
-  //       token
-  //     );
-  //     if (data) {
-  //       dispatch(
-  //         setLogin({
-  //           token: data.token,
-  //         })
-  //       );
-  //       dispatch(
-  //         setUserData({
-  //           user: data.user,
-  //         })
-  //       );
-  //       navigate("/home");
-  //     }
-  //   } catch (err) {
-  //     ((error) => {
-  //       toast.error(error.response.data.msg, {
-  //         position: "top-center",
-  //       });
-  //     })(err);
-  //   }
-  // };
-
   const handleGoogleLogin = async (response) => {
     const data = JSON.stringify({ token: response.credential });
     axios
@@ -194,7 +169,7 @@ const Form = () => {
         navigate("/home");
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         ((error) => {
           toast.error(error?.response?.data?.msg, {
             position: "top-center",
@@ -231,47 +206,15 @@ const Form = () => {
             {isRegister && (
               <>
                 <TextField
-                  label="First Name"
+                  label="username"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values?.firstName}
-                  name="firstName"
+                  value={values?.username}
+                  name="username"
                   error={
-                    Boolean(touched?.firstName) && Boolean(errors?.firstName)
+                    Boolean(touched?.username) && Boolean(errors?.username)
                   }
-                  helperText={touched?.firstName && errors?.firstName}
-                  sx={{ gridColumn: "span 2" }}
-                />
-                <TextField
-                  label="Last Name"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values?.lastName}
-                  name="lastName"
-                  error={Boolean(touched?.lastName) && Boolean(errors?.lastName)}
-                  helperText={touched?.lastName && errors?.lastName}
-                  sx={{ gridColumn: "span 2" }}
-                />
-                <TextField
-                  label="Location"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values?.location}
-                  name="location"
-                  error={Boolean(touched?.location) && Boolean(errors?.location)}
-                  helperText={touched?.location && errors?.location}
-                  sx={{ gridColumn: "span 4" }}
-                />
-                <TextField
-                  label="Occupation"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values?.occupation}
-                  name="occupation"
-                  error={
-                    Boolean(touched?.occupation) && Boolean(errors?.occupation)
-                  }
-                  helperText={touched?.occupation && errors?.occupation}
+                  helperText={touched?.username && errors?.username}
                   sx={{ gridColumn: "span 4" }}
                 />
                 <Box
@@ -307,10 +250,20 @@ const Form = () => {
                     )}
                   </Dropzone>
                 </Box>
+                <TextField
+                  label="Email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values?.email}
+                  name="email"
+                  error={Boolean(touched?.email) && Boolean(errors?.email)}
+                  helperText={touched?.email && errors?.email}
+                  sx={{ gridColumn: "span 4" }}
+                />
               </>
             )}
 
-            <TextField
+            {/* <TextField
               label="Email"
               onBlur={handleBlur}
               onChange={handleChange}
@@ -319,7 +272,22 @@ const Form = () => {
               error={Boolean(touched?.email) && Boolean(errors?.email)}
               helperText={touched?.email && errors?.email}
               sx={{ gridColumn: "span 4" }}
-            />
+            /> */}
+            {isLogin && (
+              <TextField
+                label="Email or username"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values?.emailOrUsername}
+                name="emailOrUsername"
+                error={
+                  Boolean(touched?.emailOrUsername) &&
+                  Boolean(errors?.emailOrUsername)
+                }
+                helperText={touched?.emailOrUsername && errors?.emailOrUsername}
+                sx={{ gridColumn: "span 4" }}
+              />
+            )}
             <TextField
               label="Password"
               type="password"

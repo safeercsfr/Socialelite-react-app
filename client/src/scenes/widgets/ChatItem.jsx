@@ -32,12 +32,12 @@ const ChatItem = ({ chat }) => {
 
         setUser(res?.data?.user);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
     getUser();
-  }, [token]);
+  }, [friendId]);
 
   const ids = {
     chatId: chat?._id,
@@ -56,7 +56,7 @@ const ChatItem = ({ chat }) => {
           <ListItemAvatar>
             <Avatar alt={`Avatar `} src={user?.picturePath} />
           </ListItemAvatar>
-          <ListItemText primary={user?.firstName} />
+          <ListItemText primary={user?.username} />
         </ListItemButton>
       </ListItem>
       <Divider />

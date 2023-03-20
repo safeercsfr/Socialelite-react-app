@@ -26,12 +26,12 @@ const ChatList = () => {
         );
         setConverstations(res?.data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
     getConverstations();
   }, []);
-  console.log(converstations, "--converstations");
+  
   return (
     <WidgetWrapper>
       <Box flex={4}>

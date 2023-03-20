@@ -1,7 +1,7 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFollowers, setFollowings, setSuggestions } from "state/authSlice";
 import { getDataAPI } from "utils/fetchData";
@@ -32,7 +32,6 @@ const FriendListWidget = ({ userId, isSuggestion }) => {
         dispatch(setFollowings({ followings: data?.formattedFollowings }));
         dispatch(setFollowers({ followers: [] }));
         dispatch(setSuggestions({ suggestions: data?.suggestions }));
-
       } else {
         dispatch(setFollowings({ followings: data?.formattedFollowings }));
         dispatch(setFollowers({ followers: data?.formattedFollowers }));
@@ -68,7 +67,7 @@ const FriendListWidget = ({ userId, isSuggestion }) => {
               <Friend
                 key={friend._id}
                 friendId={friend._id}
-                name={`${friend.firstName} ${friend.lastName}`}
+                name={friend?.username}
                 subtitle={friend.occupation}
                 userPicturePath={friend.picturePath}
                 isFriendData
@@ -84,7 +83,7 @@ const FriendListWidget = ({ userId, isSuggestion }) => {
             <Friend
               key={friend?._id + I}
               friendId={friend?._id}
-              name={`${friend?.firstName} ${friend?.lastName}`}
+              name={friend?.username}
               subtitle={friend?.occupation}
               userPicturePath={friend?.picturePath}
               isFriendData
