@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import ChatItem from "./ChatItem";
 import WidgetWrapper from "components/WidgetWrapper";
 import axios from "axios";
+import config from "utils/config";
 
 const ChatList = () => {
   const [converstations, setConverstations] = useState([]);
@@ -16,7 +17,7 @@ const ChatList = () => {
     const getConverstations = async () => {
       try {
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/converstations/${userId}`,
+          `${config.SERVER_URL}/converstations/${userId}`,
           {
             headers: {
               "Content-Type": "multipart/form-data",

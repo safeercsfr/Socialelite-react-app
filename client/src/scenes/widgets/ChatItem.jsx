@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { setIds } from "state/authSlice";
+import config from "utils/config";
 
 const ChatItem = ({ chat }) => {
   const [user, setUser] = useState(null);
@@ -21,7 +22,7 @@ const ChatItem = ({ chat }) => {
     const getUser = async () => {
       try {
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/users/${friendId}`,
+          `${config.SERVER_URL}/users/${friendId}`,
           {
             headers: {
               "Content-Type": "multipart/form-data",
